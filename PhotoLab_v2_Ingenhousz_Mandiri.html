@@ -1,0 +1,3602 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark"><head>
+  
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>PhotoLab: Investigasi Fotosintesis Interaktif (PBL)</title>
+  <meta name="description" content="Virtual Laboratory fisiologi fotosintesis (percobaan Ingenhousz) berbasis Problem Based Learning untuk siswa SMA dan instrumen penelitian quasi eksperimen.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    /* DESIGN TOKENS & CSS VARIABLES */
+    :root {
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --color-primary: #10b981;
+      --color-primary-dark: #059669;
+      --color-primary-light: #d1fae5;
+      --color-primary-glow: rgba(16, 185, 129, 0.25);
+      
+      --color-secondary: #06b6d4;
+      --color-accent: #f59e0b;
+      --color-danger: #ef4444;
+      --color-info: #3b82f6;
+      
+      --bg-body: #0b1120;
+      --bg-surface: #131d31;
+      --bg-surface-elevated: #1e293b;
+      --bg-surface-soft: #172439;
+      --border-subtle: #1e293b;
+      --border-strong: #334155;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-soft: #cbd5e1;
+      --text-inverse: #0b1120;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.25);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+      --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 20px rgba(16,185,129,0.3);
+      
+      --transition-fast: 150ms ease;
+      --transition-normal: 250ms ease;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-soft: #e2e8f0;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #334155;
+      --text-inverse: #ffffff;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.12);
+      --shadow-glow: 0 0 20px rgba(16,185,129,0.2);
+    }
+
+    /* BASE RESET & ACCESSIBILITY */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-top: env(safe-area-inset-top, 0);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* UTILITY LAYOUT */
+    .container {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* HEADER & BRANDING */
+    .app-header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1120;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-glow);
+      flex-shrink: 0;
+    }
+
+    .brand-meta h1 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-meta span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      color: var(--text-soft);
+    }
+
+    @media (min-width: 640px) {
+      .user-badge {
+        display: flex;
+      }
+    }
+
+    .btn-icon {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: 1.1rem;
+    }
+
+    .btn-icon:hover {
+      background: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    /* STEP NAVIGATION TABS */
+    .pbl-nav-container {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .pbl-nav-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pbl-nav {
+      display: flex;
+      gap: 4px;
+      padding: 8px 16px;
+      min-width: max-content;
+    }
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .nav-tab .tab-step {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .nav-tab:hover:not(:disabled) {
+      color: var(--text-main);
+      background: var(--bg-surface-elevated);
+    }
+
+    .nav-tab.active {
+      color: var(--text-main);
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tab.active .tab-step {
+      background: var(--color-primary);
+      color: var(--text-inverse);
+    }
+
+    .nav-tab.completed .tab-step {
+      background: var(--color-primary-dark);
+      color: #ffffff;
+    }
+
+    .nav-tab:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* MAIN APP CONTENT AREA */
+    main.app-main {
+      flex: 1;
+      padding: 24px 0 60px;
+    }
+
+    .stage-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .stage-card {
+        padding: 18px 14px;
+        border-radius: var(--radius-md);
+      }
+    }
+
+    .stage-header {
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .stage-title-wrap {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .stage-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary-glow);
+      color: var(--color-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .stage-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .stage-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* CARDS, GRIDS & FORM CONTROLS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-soft);
+    }
+
+    .form-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      transition: border-color var(--transition-fast);
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-primary-glow);
+    }
+
+    .form-textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--text-inverse);
+      box-shadow: 0 2px 8px var(--color-primary-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-strong);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--border-strong);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.8125rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* ACCORDION (KONSEP KUNCI) */
+    .accordion-item {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      text-align: left;
+      padding: 14px 18px;
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background var(--transition-fast);
+    }
+
+    .accordion-trigger:hover {
+      background: var(--border-subtle);
+    }
+
+    .accordion-content {
+      padding: 0 18px 16px;
+      font-size: 0.875rem;
+      color: var(--text-soft);
+      border-top: 1px solid var(--border-subtle);
+      display: none;
+      background: var(--bg-surface);
+    }
+
+    .accordion-item.open .accordion-content {
+      display: block;
+      padding-top: 14px;
+    }
+
+    .accordion-icon {
+      transition: transform var(--transition-fast);
+    }
+
+    .accordion-item.open .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    /* SIMULATION LAB CANVAS & CONTAINER */
+    .lab-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 900px) {
+      .lab-layout {
+        grid-template-columns: 360px 1fr;
+      }
+    }
+
+    .lab-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .lab-viewport-wrap {
+      background: radial-gradient(circle at center, #1e293b, #090d16);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 480px;
+    }
+
+    [data-theme="light"] .lab-viewport-wrap {
+      background: radial-gradient(circle at center, #f1f5f9, #cbd5e1);
+    }
+
+    .light-halo {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      transition: background var(--transition-normal);
+      opacity: 0.35;
+    }
+
+    .apparatus-svg-container {
+      width: 100%;
+      max-width: 440px;
+      height: 380px;
+      position: relative;
+      margin: auto 0;
+    }
+
+    .apparatus-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+    }
+
+    /* TIMER & COUNTER OVERLAY */
+    .lab-hud {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      margin-bottom: 8px;
+    }
+
+    [data-theme="light"] .lab-hud {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .hud-metric {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hud-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .hud-value {
+      font-family: var(--font-mono);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+
+    .lamp-track {
+      width: 100%;
+      background: var(--bg-surface-elevated);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong);
+      margin-top: 12px;
+    }
+
+    .intensity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+
+    /* COLOR FILTER PICKER */
+    .color-swatches {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .color-radio {
+      position: relative;
+      flex: 1;
+    }
+
+    .color-radio input {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .color-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 4px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border-strong);
+      background: var(--bg-surface);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 4px;
+    }
+
+    .color-radio input:checked + .color-pill {
+      border-color: var(--color-primary);
+      background: var(--bg-surface-elevated);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+
+    /* DATA TABLE & CHARTS */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-elevated);
+      margin-bottom: 20px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    .data-table th {
+      background: var(--bg-surface);
+      padding: 12px 14px;
+      font-weight: 700;
+      color: var(--text-soft);
+      border-bottom: 1px solid var(--border-strong);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag-control {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    .tag-treatment {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--color-info);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+
+    /* CHART CONTAINER */
+    .chart-box {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .chart-canvas-wrap {
+      width: 100%;
+      height: 320px;
+      position: relative;
+    }
+
+    canvas#chartCanvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* TREND & INSIGHT CARD */
+    .insight-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .insight-title {
+      font-weight: 700;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9375rem;
+      margin-bottom: 8px;
+    }
+
+    /* CHECKLIST / PROGRESS GATE */
+    .gate-checklist {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .gate-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.875rem;
+      margin-bottom: 8px;
+      color: var(--text-soft);
+    }
+
+    .gate-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .gate-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .gate-checkbox.checked {
+      background: var(--color-primary);
+      color: var(--text-inverse);
+    }
+
+    .gate-checkbox.unchecked {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      color: transparent;
+    }
+
+    /* EVALUATION, RUBRICS & QUIZ */
+    .rubric-score-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .rubric-badge {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+
+    .rubric-criteria-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .criteria-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.84rem;
+    }
+
+    .criteria-item.met {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .quiz-question-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .quiz-question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .quiz-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary-glow);
+      color: var(--color-primary);
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-option-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all var(--transition-fast);
+    }
+
+    .quiz-option-label:hover {
+      border-color: var(--color-primary);
+      background: var(--bg-surface-soft);
+    }
+
+    .quiz-option-label.selected {
+      border-color: var(--color-primary);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .quiz-option-label.correct {
+      border-color: var(--color-primary);
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--color-primary);
+    }
+
+    .quiz-option-label.wrong {
+      border-color: var(--color-danger);
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--color-danger);
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      display: none;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--color-primary);
+    }
+
+    .quiz-feedback.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--color-danger);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 17, 32, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* CHLOROPLAST SVG ANIMATION */
+    .chloroplast-flow-particle {
+      animation: floatPath 3s linear infinite;
+    }
+
+    @keyframes floatPath {
+      0% { transform: translateY(0) scale(0.9); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(-40px) scale(1.1); opacity: 0; }
+    }
+
+    /* FOOTER */
+    .app-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      padding: 24px 0;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* PRINT STYLESHEET */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .app-header, .pbl-nav-container, .btn-group, .btn, .hud-controls, .btn-icon, .modal-overlay, .app-footer, .no-print {
+        display: none !important;
+      }
+      .stage-card {
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        page-break-inside: avoid;
+        margin-bottom: 20px !important;
+      }
+      .print-header {
+        display: block !important;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 12px;
+      }
+      .data-table th, .data-table td {
+        color: #000000 !important;
+        border-color: #dddddd !important;
+      }
+      .card, .table-responsive, .insight-card {
+        background: #ffffff !important;
+        border-color: #cccccc !important;
+        color: #000000 !important;
+      }
+    }
+
+    .print-header {
+      display: none;
+    }
+  </style>
+<script src="/_aistudio-iframe.js?v=1f94f900"></script></head>
+<body>
+
+  <!-- PRINT ONLY HEADER -->
+  <div class="print-header container">
+    <h2>LAPORAN PENELITIAN &amp; INVESTIGASI FOTOSINTESIS INGENHOUSZ</h2>
+    <p>Media Virtual Lab Berbasis Problem Based Learning (PBL) - Pembelajaran Biologi SMA</p>
+    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:12px;">
+      <span id="printStudentInfo">Nama: - | Kelas: -</span>
+      <span id="printDate">Tanggal: -</span>
+    </div>
+  </div>
+
+  <!-- APP HEADER -->
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand-group">
+        <div class="brand-icon" aria-hidden="true">🌱</div>
+        <div class="brand-meta">
+          <h1>PhotoLab <span style="display:inline; font-weight:400; color:var(--color-primary); font-size:0.8em;">PBL v2.0</span></h1>
+          <span>Fisiologi Fotosintesis: Percobaan Ingenhousz</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="user-badge" id="headerUserBadge">
+          <span style="color:var(--color-primary);">●</span>
+          <span id="headerStudentName">Siswa Belum Terdaftar</span>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" id="btnHeaderDownloadHTML" title="Unduh File Aplikasi HTML Mandiri (.html) untuk dijalankan secara offline" aria-label="Unduh HTML VLab">
+          📥 Unduh HTML
+        </button>
+        <button type="button" class="btn-icon" id="themeToggleBtn" title="Ganti Tema (Gelap/Terang)" aria-label="Ganti Tema">☀️</button>
+        <button type="button" class="btn-icon" id="resetAppBtn" title="Ulangi Investigasi (Reset State)" aria-label="Reset Investigasi">
+          🔄
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PBL STEP TABS (STAGES 0 - 5) -->
+  <nav class="pbl-nav-container" aria-label="Tahapan Investigasi Problem Based Learning">
+    <div class="container pbl-nav" id="pblNavTabs">
+      <button class="nav-tab active" data-stage="0" id="tabStage0">
+        <span class="tab-step">0</span>
+        <span>Tujuan &amp; Identitas</span>
+      </button>
+      <button class="nav-tab" data-stage="1" id="tabStage1" disabled="">
+        <span class="tab-step">1</span>
+        <span>Orientasi Masalah</span>
+      </button>
+      <button class="nav-tab" data-stage="2" id="tabStage2" disabled="">
+        <span class="tab-step">2</span>
+        <span>Merancang Eksperimen</span>
+      </button>
+      <button class="nav-tab" data-stage="3" id="tabStage3" disabled="">
+        <span class="tab-step">3</span>
+        <span>Eksperimen (Lab)</span>
+      </button>
+      <button class="nav-tab" data-stage="4" id="tabStage4" disabled="">
+        <span class="tab-step">4</span>
+        <span>Data &amp; Analisis</span>
+      </button>
+      <button class="nav-tab" data-stage="5" id="tabStage5" disabled="">
+        <span class="tab-step">5</span>
+        <span>Kesimpulan &amp; Refleksi</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN MULTI-STAGE CONTAINER -->
+  <main class="app-main container" id="mainContent">
+
+    <!-- ==================== TAHAP 0: TUJUAN & IDENTITAS ==================== -->
+    <section class="stage-section" id="stageSection0" style="display: block;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Tahap Persiapan</span>
+            <h2 class="stage-title">Tujuan Pembelajaran &amp; Identitas Peneliti</h2>
+            <p class="stage-subtitle">Investigasi Fisiologi Plantae: Faktor-Faktor Pembatas Laju Fotosintesis (Percobaan Ingenhousz)</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Indikator / CPMK -->
+          <div class="card">
+            <h3 class="card-title">🎯 Indikator Capaian Pembelajaran (CPMK)</h3>
+            <ul style="padding-left: 20px; font-size: 0.875rem; color: var(--text-soft); display: flex; flex-direction: column; gap: 8px;">
+              <li><strong>[C3 - Mengoperasikan]</strong> Mengoperasikan instrumen virtual Ingenhousz secara presisi untuk menguji pengaruh jarak sumber cahaya, konsentrasi NaHCO₃, dan spektrum warna cahaya.</li>
+              <li><strong>[C4 - Menganalisis]</strong> Mengidentifikasi hubungan kuantitatif antara variabel perlakuan dengan laju pembentukan gas oksigen melalui representasi tabel ulangan, rata-rata, simpangan baku, dan grafik error-bar.</li>
+              <li><strong>[C4 - Mengintegrasikan]</strong> Mengintegrasikan hukum kuadrat terbalik (intensitas cahaya) dan hukum faktor pembatas Blackman untuk menjelaskan kurva saturasi laju fotosintesis.</li>
+              <li><strong>[C5 - Mengevaluasi]</strong> Mengevaluasi hipotesis awal berbasis bukti empiris terukur dan menyusun kesimpulan serta refleksi galat eksperimental.</li>
+            </ul>
+
+            <div style="margin-top: 16px; padding: 12px; background: var(--bg-surface); border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary); font-size: 0.8125rem;">
+              <strong>Prasyarat Konsep:</strong> Memahami reaksi terang (fotolisis air di tilakoid), reaksi gelap / siklus Calvin (fiksasi CO₂ di stroma), serta spektrum absorpsi pigmen klorofil.
+            </div>
+          </div>
+
+          <!-- Form Identitas Siswa -->
+          <div class="card">
+            <h3 class="card-title">👤 Identitas Siswa / Responden Penelitian</h3>
+            <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 16px;">
+              Data identitas digunakan untuk rekam jejak penilaian quasi eksperimen dan penerbitan laporan penelitian resmi.
+            </p>
+
+            <form id="studentIdentityForm">
+              <div class="form-group">
+                <label class="form-label" for="inputStudentName">Nama Lengkap / Kode Siswa *</label>
+                <input type="text" id="inputStudentName" class="form-input" placeholder="Contoh: Budi Santoso / EXP-01" required="" autocomplete="name">
+                <div class="form-hint">Gunakan nama lengkap atau kode responden yang diberikan guru/peneliti.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inputStudentClass">Kelas / Jurusan *</label>
+                <input type="text" id="inputStudentClass" class="form-input" placeholder="Contoh: XI MIPA 2" required="">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inputStudentGroup">Kelompok Kerja (Opsional)</label>
+                <input type="text" id="inputStudentGroup" class="form-input" placeholder="Contoh: Kelompok 3 (Thylakoid)">
+              </div>
+
+              <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="btnStartInvestigate">
+                  Saya Paham, Mulai Investigasi Masalah ➔
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAHAP 1: ORIENTASI MASALAH ==================== -->
+    <section class="stage-section" id="stageSection1" style="display:none;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Sintaks 1 PBL</span>
+            <h2 class="stage-title">Orientasi Masalah Autentik</h2>
+            <p class="stage-subtitle">Amati fenomena biologis kontekstual di bawah ini, rumuskan pertanyaan investigasi, dan susun hipotesis teruji.</p>
+          </div>
+        </div>
+
+        <!-- Fenomena & Ilustrasi SVG -->
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 class="card-title">🌿 Fenomena: Mengapa Tanaman di Bawah Naungan Pohon Tumbuh Lebih Lambat?</h3>
+          
+          <div class="grid-2" style="align-items: center;">
+            <div>
+              <p style="font-size: 0.9375rem; color: var(--text-soft); margin-bottom: 12px;">
+                Di perkebunan dan taman sekolah, tanaman herba yang tumbuh tepat di bawah naungan pohon rindang tampak pucat, memiliki batang kurus (etiolasi parsial), dan pertumbuhannya sangat lambat dibandingkan tanaman sejenis yang berada di tanah terbuka tanpa naungan.
+              </p>
+              <p style="font-size: 0.9375rem; color: var(--text-soft); margin-bottom: 12px;">
+                Ketika tanaman air <em>Hydrilla verticillata</em> dimasukkan ke dalam beker dan disinari lampu dari jarak yang berbeda-beda, laju kemunculan gelembung gas oksigen ($O_2$) dari tangkai tanaman berubah secara drastis. Penambahan sedikit bubuk soda kue (garam $NaHCO_3$) ke dalam air juga secara mengejutkan meningkatkan frekuensi semburan gelembung gas tersebut.
+              </p>
+              <div style="padding: 10px 14px; background: rgba(6, 182, 212, 0.1); border-left: 3px solid var(--color-secondary); font-size: 0.8125rem; border-radius: 4px;">
+                <strong>Tantangan Investigasi:</strong> Bagaimana intensitas cahaya, konsentrasi $CO_2$ terlarut, dan panjang gelombang cahaya mengatur laju fotosintesis pada tumbuhan?
+              </div>
+            </div>
+
+            <!-- SVG Ilustrasi Kontekstual -->
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 12px; display: flex; justify-content: center;">
+              <svg width="100%" height="220" viewBox="0 0 460 220" style="max-width:440px;" xmlns="http://www.w3.org/2000/svg">
+                <!-- Sky & Ground -->
+                <rect x="0" y="0" width="460" height="170" fill="url(#skyGrad)" rx="8"></rect>
+                <rect x="0" y="165" width="460" height="55" fill="#2d3748" rx="0"></rect>
+                <path d="M0,170 Q115,165 230,170 T460,170 L460,220 L0,220 Z" fill="#1e293b"></path>
+                
+                <defs>
+                  <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#0284c7" stop-opacity="0.35"></stop>
+                    <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8"></stop>
+                  </linearGradient>
+                  <linearGradient id="sunGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fde047"></stop>
+                    <stop offset="100%" stop-color="#eab308"></stop>
+                  </linearGradient>
+                </defs>
+
+                <!-- Sun on right side -->
+                <circle cx="410" cy="45" r="28" fill="url(#sunGlow)" filter="drop-shadow(0 0 14px #eab308)"></circle>
+                <line x1="410" y1="10" x2="410" y2="0" stroke="#facc15" stroke-width="2"></line>
+                <line x1="410" y1="80" x2="410" y2="90" stroke="#facc15" stroke-width="2"></line>
+                <line x1="375" y1="45" x2="365" y2="45" stroke="#facc15" stroke-width="2"></line>
+                <line x1="445" y1="45" x2="455" y2="45" stroke="#facc15" stroke-width="2"></line>
+
+                <!-- Big Canopy Tree on Left -->
+                <!-- Trunk -->
+                <path d="M75,170 L85,95 Q100,75 110,65 L115,95 L125,170 Z" fill="#78350f"></path>
+                <!-- Foliage -->
+                <circle cx="100" cy="70" r="55" fill="#166534" opacity="0.95"></circle>
+                <circle cx="65" cy="85" r="40" fill="#15803d" opacity="0.9"></circle>
+                <circle cx="140" cy="85" r="42" fill="#14532d" opacity="0.9"></circle>
+                <circle cx="105" cy="40" r="38" fill="#16a34a" opacity="0.95"></circle>
+
+                <!-- Shadow under tree -->
+                <ellipse cx="110" cy="175" rx="85" ry="14" fill="#090d16" opacity="0.65"></ellipse>
+                
+                <!-- Under-shade plant (pale, stunted) -->
+                <path d="M110,172 Q108,150 110,135 Q106,128 98,132" stroke="#84cc16" stroke-width="2.5" fill="none"></path>
+                <circle cx="98" cy="132" r="3" fill="#a3e635"></circle>
+                <path d="M110,145 Q118,140 122,143" stroke="#84cc16" stroke-width="2" fill="none"></path>
+                <text x="110" y="195" font-size="10" fill="#94a3b8" text-anchor="middle" font-weight="600">Tanaman di Naungan (Kerdil)</text>
+
+                <!-- Open Area plant (vibrant, lush, bushy) -->
+                <!-- Strong Sun rays hitting it -->
+                <line x1="385" y1="70" x2="330" y2="130" stroke="#fde047" stroke-dasharray="3,3" opacity="0.7" stroke-width="1.5"></line>
+                <path d="M330,172 Q330,130 330,110" stroke="#15803d" stroke-width="4" fill="none"></path>
+                <!-- Leaves -->
+                <ellipse cx="315" cy="125" rx="14" ry="7" transform="rotate(-30 315 125)" fill="#22c55e"></ellipse>
+                <ellipse cx="345" cy="120" rx="15" ry="8" transform="rotate(25 345 120)" fill="#16a34a"></ellipse>
+                <ellipse cx="310" cy="145" rx="16" ry="8" transform="rotate(-20 310 145)" fill="#15803d"></ellipse>
+                <ellipse cx="350" cy="142" rx="16" ry="8" transform="rotate(20 350 142)" fill="#22c55e"></ellipse>
+                <circle cx="330" cy="105" r="10" fill="#4ade80"></circle>
+                <text x="330" y="195" font-size="10" fill="#4ade80" text-anchor="middle" font-weight="700">Tanaman Terbuka (Subur)</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Rumusan Masalah & Hipotesis -->
+        <div class="card">
+          <h3 class="card-title">📝 Rumusan Masalah &amp; Hipotesis Terstruktur</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="inputProblemStatement">1. Rumusan Masalah Penelitian *</label>
+            <input type="text" id="inputProblemStatement" class="form-input" placeholder="Contoh: Bagaimana pengaruh jarak sumber cahaya dan konsentrasi NaHCO3 terhadap laju fotosintesis Hydrilla verticillata?" required="">
+            <div class="form-hint">Tuliskan dalam bentuk kalimat tanya spesifik yang menghubungkan variabel bebas dan terikat.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inputHypothesis">2. Hipotesis Ilmiah Teruji (Format Wajib: "Jika ... maka ... karena ...") *</label>
+            <textarea id="inputHypothesis" class="form-textarea" placeholder="Contoh: Jika jarak lampu terhadap tanaman Hydrilla verticillata semakin dekat, maka laju pembentukan gelembung oksigen akan meningkat sampai batas tertentu, karena intensitas foton cahaya yang diterima klorofil bertambah sehingga reaksi fotolisis air berlangsung lebih cepat." required=""></textarea>
+            <div class="form-hint" id="hypothesisValidationHint">
+              ⚠️ Format harus memuat komponen: <strong>Jika</strong> [variabel bebas], <strong>maka</strong> [variabel terikat], <strong>karena</strong> [alasan ilmiah].
+            </div>
+          </div>
+
+          <div id="hypothesisAlert" style="display:none; padding:10px 14px; border-radius:var(--radius-sm); font-size:0.84rem; margin-top:8px;"></div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" onclick="app.goToStage(0)">❮ Kembali</button>
+            <button type="button" class="btn btn-primary" id="btnValidateHypothesis">
+              Simpan Hipotesis &amp; Lanjut ke Rancangan Eksperimen ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAHAP 2: MERANCANG EKSPERIMEN ==================== -->
+    <section class="stage-section" id="stageSection2" style="display:none;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Sintaks 2 PBL</span>
+            <h2 class="stage-title">Merancang Eksperimen &amp; Identifikasi Variabel</h2>
+            <p class="stage-subtitle">Sebelum masuk ke laboratorium, tentukan peran masing-masing variabel agar investigasi valid dan terkontrol.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 20px;">
+          <h3 class="card-title">🔍 Matriks Klasifikasi Variabel Penelitian</h3>
+          <p style="font-size: 0.875rem; color: var(--text-soft); margin-bottom: 16px;">
+            Pilih pasangan variabel yang tepat untuk investigasi fisiologi fotosintesis pada sistem Ingenhousz. Sistem akan memverifikasi ketepatan jawabanmu secara interaktif.
+          </p>
+
+          <div class="table-responsive">
+            <table class="data-table" id="variableMatrixTable">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Kategori Variabel</th>
+                  <th style="width: 45%;">Pilihan Parameter Eksperimen</th>
+                  <th style="width: 30%;">Status Validasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>1. Variabel Manipulasi (Bebas)</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">Faktor yang sengaja diubah/divariasikan</div>
+                  </td>
+                  <td>
+                    <select class="form-select" id="selectVarManipulated" aria-label="Variabel Manipulasi">
+                      <option value="">-- Pilih Variabel --</option>
+                      <option value="jarak_cahaya">Jarak Lampu / Intensitas Cahaya (cm)</option>
+                      <option value="gelembung">Jumlah Gelembung Gas O2 per Menit</option>
+                      <option value="volume_air">Volume Total Air dalam Beker (500 mL)</option>
+                      <option value="spesies">Spesies Tanaman (Hydrilla verticillata)</option>
+                    </select>
+                  </td>
+                  <td id="statusVarManipulated"><span style="color:var(--text-muted); font-size:0.8rem;">Belum diperiksa</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <strong>2. Variabel Respons (Terikat)</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">Hasil pengukuran yang dipengaruhi manipulasi</div>
+                  </td>
+                  <td>
+                    <select class="form-select" id="selectVarResponding" aria-label="Variabel Respons">
+                      <option value="">-- Pilih Variabel --</option>
+                      <option value="warna_lampu">Filter Panjang Gelombang Warna</option>
+                      <option value="gelembung">Jumlah Gelembung Gas O2 per Menit</option>
+                      <option value="konsentrasi_bikarbonat">Konsentrasi NaHCO3 (%)</option>
+                      <option value="suhu_ruang">Suhu Termometer Lingkungan</option>
+                    </select>
+                  </td>
+                  <td id="statusVarResponding"><span style="color:var(--text-muted); font-size:0.8rem;">Belum diperiksa</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <strong>3. Variabel Kontrol</strong>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">Faktor yang dijaga seragam/konstan</div>
+                  </td>
+                  <td>
+                    <select class="form-select" id="selectVarControlled" aria-label="Variabel Kontrol">
+                      <option value="">-- Pilih Variabel --</option>
+                      <option value="jarak_lampu">Jarak Lampu (10-50 cm)</option>
+                      <option value="kontrol_baku">Jenis Tanaman (Hydrilla), Volume Air (500 mL), &amp; Suhu Konstan</option>
+                      <option value="gelembung_o2">Jumlah Gelembung Oksigen Terkumpul</option>
+                      <option value="filter_warna">Warna Filter Spektrum</option>
+                    </select>
+                  </td>
+                  <td id="statusVarControlled"><span style="color:var(--text-muted); font-size:0.8rem;">Belum diperiksa</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="variableFeedbackBox" style="display:none; padding:12px 16px; border-radius:var(--radius-sm); font-size:0.875rem; margin-top:12px;"></div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" onclick="app.goToStage(1)">❮ Kembali ke Orientasi Masalah</button>
+            <button type="button" class="btn btn-secondary" id="btnCheckVariables">Periksa Rancangan Variabel 🔍</button>
+            <button type="button" class="btn btn-primary" id="btnProceedToLab" disabled="">
+              Rancangan Valid, Masuk Laboratorium ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAHAP 3: EKSPERIMEN (LAB) ==================== -->
+    <section class="stage-section" id="stageSection3" style="display:none;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Sintaks 3 PBL</span>
+            <h2 class="stage-title">Laboratorium Virtual Ingenhousz</h2>
+            <p class="stage-subtitle">Uji faktor pembatas laju fotosintesis dengan ulangan minimal 2 kali untuk memastikan presisi data.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnOpenChloroplastModal">
+            🔬 Zoom Kloroplas (Reaksi Biokimia)
+          </button>
+        </div>
+
+        <!-- PANEL KONSEP KUNCI (ACCORDION) -->
+        <div class="accordion-item" id="accordionKeyConcepts">
+          <button class="accordion-trigger" id="btnToggleConcepts" type="button" aria-expanded="false">
+            <span>📚 Konsep Kunci: Persamaan Fotosintesis, Klorofil &amp; Faktor Pembatas</span>
+            <span class="accordion-icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+              <div>
+                <strong style="color:var(--color-primary);">1. Persamaan Umum Fotosintesis:</strong>
+                <p style="font-family:var(--font-mono); font-size:0.82rem; margin:4px 0; background:var(--bg-surface-elevated); padding:6px; border-radius:4px;">
+                  6CO₂ + 6H₂O + Foton ➔ C₆H₁₂O₆ + 6O₂↑
+                </p>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Gas oksigen ($O_2$) terbentuk dari fotolisis air di fotosistem II (reaksi terang tilakoid).</p>
+              </div>
+
+              <div>
+                <strong style="color:var(--color-secondary);">2. Hukum Kuadrat Terbalik:</strong>
+                <p style="font-size:0.82rem; margin-top:4px;">
+                  Intensitas cahaya ($I$) berbanding terbalik dengan kuadrat jarak ($d$): 
+                  <span style="font-family:var(--font-mono);">$I \propto 1/d^2$</span>. Menjauhkan lampu 2 kali lipat menurunkan intensitas hingga 75%.
+                </p>
+              </div>
+
+              <div>
+                <strong style="color:var(--color-accent);">3. Hukum Faktor Pembatas Blackman:</strong>
+                <p style="font-size:0.82rem; margin-top:4px;">
+                  Kecepatan fotosintesis dibatasi oleh faktor yang ketersediaannya paling minimal. Ketika cahaya melimpah, konsentrasi $CO_2$ atau enzim RuBisCO menjadi faktor pembatas (terjadi plateau/saturasi).
+                </p>
+              </div>
+
+              <div>
+                <strong style="color:#a855f7;">4. Peran Reagen NaHCO₃:</strong>
+                <p style="font-size:0.82rem; margin-top:4px;">
+                  $NaHCO_3$ berdisosiasi dalam air menghasilkan ion bikarbonat ($HCO_3^-$) yang meningkatkan ketersediaan $CO_2$ terlarut untuk fiksasi stroma.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAB WORKSPACE GRID -->
+        <div class="lab-layout">
+          <!-- KONTROL PARAMETER EXPERIMEN -->
+          <div class="lab-controls">
+            <!-- Box Kondisi Baku / Kontrol -->
+            <div class="card" style="border-left: 3px solid var(--color-primary);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--color-primary);">Percobaan Standar</span>
+                <span class="tag-control">Wajib Dijalankan Pertama</span>
+              </div>
+              <p style="font-size:0.8125rem; color:var(--text-soft); margin-bottom:12px;">
+                Kondisi Kontrol Baku: <strong>Jarak 20 cm</strong>, <strong>NaHCO₃ 0,2%</strong>, <strong>Cahaya Putih</strong>.
+              </p>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnApplyControlPreset" style="width:100%;">
+                Terapkan Preset Kondisi Kontrol
+              </button>
+            </div>
+
+            <!-- Variabel Bebas 1: Jarak Lampu -->
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label class="form-label" for="sliderDistance" style="margin:0;">Jarak Lampu (cm)</label>
+                <span class="intensity-badge" id="badgeIntensity">Intensitas: 100% (Relatif)</span>
+              </div>
+              <input type="range" id="sliderDistance" min="10" max="50" step="10" value="20" style="width:100%; accent-color:var(--color-primary);">
+              <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-muted); margin-top:4px;">
+                <span>10 cm (400%)</span>
+                <span>20 cm (100%)</span>
+                <span>30 cm (44%)</span>
+                <span>40 cm (25%)</span>
+                <span>50 cm (16%)</span>
+              </div>
+            </div>
+
+            <!-- Variabel Bebas 2: Konsentrasi NaHCO3 -->
+            <div class="card">
+              <label class="form-label" for="selectBicarbonate">Konsentrasi NaHCO₃ (Sumber CO₂)</label>
+              <select class="form-select" id="selectBicarbonate">
+                <option value="0">0.0% (Air Murni / Tanpa Bikarbonat)</option>
+                <option value="0.1">0.1% NaHCO₃</option>
+                <option value="0.2" selected="">0.2% NaHCO₃ (Kondisi Standar)</option>
+                <option value="0.5">0.5% NaHCO₃</option>
+                <option value="1.0">1.0% NaHCO₃ (Konsentrasi Tinggi)</option>
+              </select>
+            </div>
+
+            <!-- Variabel Bebas 3: Filter Warna Cahaya -->
+            <div class="card">
+              <label class="form-label">Filter Warna Cahaya (Panjang Gelombang)</label>
+              <div class="color-swatches">
+                <label class="color-radio">
+                  <input type="radio" name="lightColor" value="white" checked="">
+                  <div class="color-pill">
+                    <span class="color-dot" style="background:#ffffff; border:1px solid #aaa;"></span>
+                    <span>Putih</span>
+                  </div>
+                </label>
+                <label class="color-radio">
+                  <input type="radio" name="lightColor" value="blue">
+                  <div class="color-pill">
+                    <span class="color-dot" style="background:#3b82f6;"></span>
+                    <span>Biru</span>
+                  </div>
+                </label>
+                <label class="color-radio">
+                  <input type="radio" name="lightColor" value="red">
+                  <div class="color-pill">
+                    <span class="color-dot" style="background:#ef4444;"></span>
+                    <span>Merah</span>
+                  </div>
+                </label>
+                <label class="color-radio">
+                  <input type="radio" name="lightColor" value="yellow">
+                  <div class="color-pill">
+                    <span class="color-dot" style="background:#eab308;"></span>
+                    <span>Kuning</span>
+                  </div>
+                </label>
+                <label class="color-radio">
+                  <input type="radio" name="lightColor" value="green">
+                  <div class="color-pill">
+                    <span class="color-dot" style="background:#22c55e;"></span>
+                    <span>Hijau</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Tombol Aksi Pengujian -->
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" class="btn btn-primary" id="btnRunExperiment" style="height:48px; font-size:1rem;">
+                ▶ Mulai Pengamatan (60 Detik)
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnFastRecord" title="Percepat hitungan 60 detik secara instan">
+                ⚡ Mode Cepat (Simulasi 5 Detik)
+              </button>
+            </div>
+          </div>
+
+          <!-- VIEWPORT APARATUS INGENHOUSZ (SIMULASI FISIKA & GELEMBUNG) -->
+          <div class="lab-viewport-wrap" id="apparatusViewport">
+            <div class="light-halo" id="lightHaloOverlay"></div>
+            
+            <!-- HUD METRIC OVERLAY -->
+            <div class="lab-hud">
+              <div class="hud-metric">
+                <span class="hud-label">Timer Eksperimen</span>
+                <span class="hud-value" id="hudTimer">00:00</span>
+              </div>
+              <div class="hud-metric" style="text-align:center;">
+                <span class="hud-label">Gelembung O₂ Terhitung</span>
+                <span class="hud-value" id="hudBubbleCount" aria-live="polite">0</span>
+              </div>
+              <div class="hud-metric" style="text-align:right;">
+                <span class="hud-label">Laju Prediksi</span>
+                <span class="hud-value" id="hudRateEst">~28 /mnt</span>
+              </div>
+            </div>
+
+            <!-- SVG APARATUS & CANVAS GELEMBUNG -->
+            <div class="apparatus-svg-container">
+              <svg class="apparatus-svg" viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+                <!-- Desk Lamp on Left with Adjustable Beam -->
+                <g id="lampApparatus" transform="translate(10, 80)">
+                  <!-- Lamp Stand -->
+                  <path d="M10,220 L50,220 L40,200 L20,200 Z" fill="#64748b"></path>
+                  <path d="M30,200 L30,90 Q30,60 55,50 L75,45" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" fill="none"></path>
+                  <!-- Lamp Shade / Bulb Housing -->
+                  <path d="M75,30 L115,5 L115,85 L75,60 Z" fill="#475569" stroke="#334155" stroke-width="2"></path>
+                  <ellipse cx="115" cy="45" rx="5" ry="40" fill="#f8fafc" id="bulbGlass"></ellipse>
+                  <!-- Emitted Light Cone Beam -->
+                  <polygon id="svgLightCone" points="115,10 380,20 380,310 115,80" fill="rgba(255,255,255,0.18)" style="transition: fill 0.3s ease;"></polygon>
+                </g>
+
+                <!-- 500 mL Glass Beaker -->
+                <g id="beakerGroup" transform="translate(160, 40)">
+                  <!-- Glass Beaker Outline & Water Level -->
+                  <rect x="30" y="40" width="180" height="260" rx="8" fill="rgba(14, 165, 233, 0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="3"></rect>
+                  <!-- Water meniscus -->
+                  <path d="M30,70 Q120,65 210,70 L210,295 Q120,305 30,295 Z" fill="rgba(56, 189, 248, 0.18)"></path>
+                  <!-- Graduations -->
+                  <line x1="32" y1="110" x2="52" y2="110" stroke="rgba(255,255,255,0.5)" stroke-width="2"></line>
+                  <text x="56" y="114" fill="rgba(255,255,255,0.6)" font-size="9" font-family="monospace">400mL</text>
+                  <line x1="32" y1="160" x2="48" y2="160" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"></line>
+                  <text x="52" y="164" fill="rgba(255,255,255,0.6)" font-size="9" font-family="monospace">300mL</text>
+                  <line x1="32" y1="210" x2="52" y2="210" stroke="rgba(255,255,255,0.5)" stroke-width="2"></line>
+                  <text x="56" y="214" fill="rgba(255,255,255,0.6)" font-size="9" font-family="monospace">200mL</text>
+
+                  <!-- Glass Funnel (Corong Kaca Terbalik) -->
+                  <path d="M50,285 L108,180 L108,135 L132,135 L132,180 L190,285 Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.5)" stroke-width="2"></path>
+
+                  <!-- Inverted Test Tube (Tabung Reaksi Terbalik) -->
+                  <path d="M106,190 L106,55 Q106,45 120,45 Q134,45 134,55 L134,190 Z" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.6)" stroke-width="2"></path>
+                  <!-- Oxygen Gas Reservoir at Closed Top -->
+                  <path id="svgGasCap" d="M107,55 Q107,46 120,46 Q133,46 133,55 L133,68 Q120,65 107,68 Z" fill="rgba(255,255,255,0.5)"></path>
+
+                  <!-- Hydrilla verticillata Plants under Funnel -->
+                  <g id="hydrillaSprigs">
+                    <!-- Central Stem -->
+                    <path d="M120,285 Q118,220 120,185" stroke="#15803d" stroke-width="3" fill="none"></path>
+                    <!-- Whorls of leaves (Hydrilla verticillata characteristics) -->
+                    <path d="M120,270 Q105,265 95,272" stroke="#22c55e" stroke-width="2" fill="none"></path>
+                    <path d="M120,270 Q135,265 145,272" stroke="#16a34a" stroke-width="2" fill="none"></path>
+                    <path d="M120,250 Q100,245 88,248" stroke="#15803d" stroke-width="2.2" fill="none"></path>
+                    <path d="M120,250 Q140,245 152,248" stroke="#22c55e" stroke-width="2.2" fill="none"></path>
+                    <path d="M120,230 Q105,225 95,226" stroke="#4ade80" stroke-width="2" fill="none"></path>
+                    <path d="M120,230 Q135,225 145,226" stroke="#16a34a" stroke-width="2" fill="none"></path>
+                    <path d="M120,205 Q110,200 102,202" stroke="#22c55e" stroke-width="1.8" fill="none"></path>
+                    <path d="M120,205 Q130,200 138,202" stroke="#15803d" stroke-width="1.8" fill="none"></path>
+                    <circle cx="120" cy="183" r="2" fill="#86efac"></circle>
+                  </g>
+
+                  <!-- BUBBLE EMISSION LAYER (SVG ANIMATED CIRCLES) -->
+                  <g id="svgBubbleContainer"></g>
+                </g>
+              </svg>
+            </div>
+
+            <div style="font-size:0.75rem; color:var(--text-muted); text-align:center;">
+              Visualisasi: Tanaman air <em>Hydrilla verticillata</em> dalam corong kaca menghasilkan gelembung gas $O_2$ yang naik ke tabung reaksi.
+            </div>
+          </div>
+        </div>
+
+        <!-- CHECKLIST PROGRESS SYARAT MENUJU TAHAP DATA -->
+        <div class="gate-checklist" id="labProgressGate">
+          <div style="font-weight:700; font-size:0.9rem; margin-bottom:8px; color:var(--text-main);">
+            📋 Syarat Kelayakan Data untuk Lanjut ke Tahap Analisis:
+          </div>
+          <div class="gate-item">
+            <span class="gate-checkbox unchecked" id="checkGateControl">✓</span>
+            <span id="textGateControl">1. Percobaan Kontrol Baku (Jarak 20 cm, NaHCO₃ 0,2%, Putih) sudah dijalankan.</span>
+          </div>
+          <div class="gate-item">
+            <span class="gate-checkbox unchecked" id="checkGateVariations">✓</span>
+            <span id="textGateVariations">2. Minimal 3 nilai perlakuan berbeda telah diuji (Progres: 0 / 3).</span>
+          </div>
+          <div class="gate-item">
+            <span class="gate-checkbox unchecked" id="checkGateReplications">✓</span>
+            <span id="textGateReplications">3. Tiap nilai perlakuan memiliki minimal 2 kali ulangan (replikasi).</span>
+          </div>
+
+          <div class="btn-group" style="margin-top:16px;">
+            <button type="button" class="btn btn-secondary" onclick="app.goToStage(2)">❮ Kembali ke Desain</button>
+            <button type="button" class="btn btn-primary" id="btnProceedToData" disabled="">
+              Syarat Terpenuhi, Buka Data &amp; Analisis ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAHAP 4: DATA DAN ANALISIS ==================== -->
+    <section class="stage-section" id="stageSection4" style="display:none;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Sintaks 4 PBL</span>
+            <h2 class="stage-title">Data Pengamatan &amp; Analisis Statistik</h2>
+            <p class="stage-subtitle">Tabel ulangan, rata-rata ($\bar{x}$), simpangan baku ($SD$), komparasi antar-perlakuan, dan grafik error-bar.</p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnDownloadCSV">
+              📥 Unduh Data (CSV)
+            </button>
+          </div>
+        </div>
+
+        <!-- TABEL DATA EKSPERIMEN LENGKAP -->
+        <div class="card" style="margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <h3 class="card-title" style="margin:0;">📊 Matriks Hasil Pengamatan Ingenhousz</h3>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnOpenCompareModal" disabled="">
+              ⚖️ Bandingkan 2 Percobaan
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="experimentDataTable">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Kondisi / Perlakuan</th>
+                  <th>Status</th>
+                  <th>Ulangan (Data Mentah)</th>
+                  <th>Rata-rata ($\bar{x}$)</th>
+                  <th>Simpangan Baku (SD)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="dataTableBody">
+                <!-- Dynamically Populated -->
+              </tbody>
+            </table>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">
+            * Laju diukur dalam satuan gelembung gas $O_2$ per menit. Simpangan baku ($SD$) mencerminkan presisi dan variabilitas biologis antar-ulangan.
+          </div>
+        </div>
+
+        <!-- GRAFIK DENGAN ERROR BAR -->
+        <div class="chart-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <h3 class="card-title" style="margin:0;" id="chartTitle">📈 Grafik Pengaruh Jarak Lampu (Intensitas) Terhadap Laju Fotosintesis</h3>
+              <p style="font-size:0.75rem; color:var(--text-muted);">Batang menunjukkan nilai rata-rata ($\bar{x}$) dan garis vertikal menunjukkan simpangan baku ($\pm 1 SD$).</p>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-secondary btn-sm active" id="btnFilterDistanceChart">Jarak Lampu</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnFilterColorChart">Warna Cahaya</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnFilterBicarbChart">NaHCO₃</button>
+            </div>
+          </div>
+
+          <div class="chart-canvas-wrap">
+            <canvas id="chartCanvas" width="600" height="300"></canvas>
+          </div>
+        </div>
+
+        <!-- SMART PATTERN DETECTION & SCIENTIFIC NARRATIVE -->
+        <div class="insight-card" id="smartTrendInsightCard">
+          <div class="insight-title">
+            <span>🧠 Analisis Tren &amp; Penjelasan Ilmiah Otomatis</span>
+          </div>
+          <div id="smartTrendNarrative" style="font-size:0.875rem; color:var(--text-main); line-height:1.6;">
+            Data sedang dievaluasi...
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:24px;">
+          <button type="button" class="btn btn-secondary" onclick="app.goToStage(3)">❮ Kembali ke Laboratorium</button>
+          <button type="button" class="btn btn-primary" onclick="app.goToStage(5)">
+            Lanjut ke Kesimpulan &amp; Evaluasi ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAHAP 5: KESIMPULAN & REFLEKSI ==================== -->
+    <section class="stage-section" id="stageSection5" style="display:none;">
+      <div class="stage-card">
+        <div class="stage-header">
+          <div class="stage-title-wrap">
+            <span class="stage-tag">Sintaks 5 &amp; 6 PBL</span>
+            <h2 class="stage-title">Kesimpulan Ilmiah, Evaluasi &amp; Refleksi</h2>
+            <p class="stage-subtitle">Uji pemahaman konsep fotosintesis, evaluasi hipotesis awal, dan refleksikan investigasi sains.</p>
+          </div>
+        </div>
+
+        <!-- FORM KESIMPULAN SISWA & RUBRIK CHECKLIST OTOMATIS -->
+        <div class="card" style="margin-bottom:24px;">
+          <h3 class="card-title">📝 1. Kesimpulan Akhir Berbasis Bukti</h3>
+          <p style="font-size:0.875rem; color:var(--text-soft); margin-bottom:12px;">
+            Tuliskan kesimpulan ilmiahmu secara komprehensif. Sistem rubrik otomatis akan memeriksa kelengkapan kesimpulanmu berdasarkan 4 kriteria saintifik.
+          </p>
+
+          <textarea id="textareaConclusion" class="form-textarea" style="min-height:120px;" placeholder="Tuliskan kesimpulan yang: (1) Menyebutkan arah hubungan variabel, (2) Merujuk data angka/rata-rata pengamatan, (3) Menjelaskan mekanisme fisiologis (foton, fotolisis, siklus Calvin, atau faktor pembatas), dan (4) Menyatakan apakah hipotesis awamu didukung atau ditolak oleh data."></textarea>
+          
+          <div style="margin-top:16px;">
+            <div class="rubric-score-bar">
+              <div>
+                <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Skor Rubrik Kesimpulan Otomatis</span>
+                <div style="font-size:0.875rem; color:var(--text-soft);">Evaluasi Berbasis Analisis Kata Kunci Ilmiah</div>
+              </div>
+              <div class="rubric-badge" id="rubricScoreDisplay">0 / 4 Poin</div>
+            </div>
+
+            <div class="rubric-criteria-list" id="rubricCriteriaContainer">
+              <!-- Dynamically Populated Criteria -->
+            </div>
+          </div>
+        </div>
+
+        <!-- KUIS 5 SOAL PILIHAN GANDA (C2 - C4) -->
+        <div class="card" style="margin-bottom:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <h3 class="card-title" style="margin:0;">🎯 2. Kuis Evaluasi Pemahaman Konsep (5 Soal C2-C4)</h3>
+              <p style="font-size:0.8125rem; color:var(--text-muted);">Skor percobaan pertama dikunci untuk keperluan penelitian quasi-eksperimen.</p>
+            </div>
+            <div id="quizScoreBadge" style="padding:4px 12px; border-radius:var(--radius-full); background:var(--bg-surface); border:1px solid var(--border-strong); font-size:0.8125rem; font-weight:700;">
+              Skor: <span id="quizScoreText">-</span>
+            </div>
+          </div>
+
+          <div id="quizContainer">
+            <!-- Dynamically Rendered 5 Questions -->
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btnSubmitQuiz" style="margin-top:12px;">
+            Kumpulkan &amp; Kunci Jawaban Kuis
+          </button>
+        </div>
+
+        <!-- 3 REFLEKSI KRITIS SISWA -->
+        <div class="card" style="margin-bottom:24px;">
+          <h3 class="card-title">🤔 3. Refleksi Investigasi Sains (3 Pertanyaan)</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="reflectErrorSource">A. Apa potensi sumber galat/kesalahan dalam eksperimen ini (baik pada lab virtual maupun jika dilakukan di laboratorium riil)? *</label>
+            <textarea id="reflectErrorSource" class="form-textarea" placeholder="Contoh: Fluktuasi suhu air akibat radiasi panas lampu pijar, gelembung oksigen yang menempel pada dinding corong dan tidak terhitung ke tabung reaksi, atau kejenuhan CO2..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reflectImprovements">B. Jika kamu mengulang investigasi ini, apa langkah modifikasi prosedur yang akan kamu lakukan untuk meningkatkan keabsahan data? *</label>
+            <textarea id="reflectImprovements" class="form-textarea" placeholder="Contoh: Menambahkan penangas air/saringan air dingin untuk menyerap panas lampu, melakukan 5 kali ulangan, dan mengukur volume gas cm³ bukan hanya cacah gelembung..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reflectFutureResearch">C. Apa pertanyaan penelitian lanjutan yang ingin kamu telusuri lebih jauh setelah menyelesaikan investigasi ini? *</label>
+            <textarea id="reflectFutureResearch" class="form-textarea" placeholder="Contoh: Bagaimana pengaruh penambahan spektrum cahaya UV atau inframerah terhadap laju pelepasan O2 pada tanaman C4 dibandingkan Hydrilla (C3)?..."></textarea>
+          </div>
+        </div>
+
+        <!-- EKSPOR & DOKUMENTASI PENELITIAN -->
+        <div class="card" style="border-top:3px solid var(--color-primary);">
+          <h3 class="card-title">💾 4. Ekspor Data &amp; Publikasi Laporan Penelitian</h3>
+          <p style="font-size:0.875rem; color:var(--text-soft); margin-bottom:16px;">
+            Simpan seluruh rekam investigasi (identitas, hipotesis, data ulangan, skor kuis pertama &amp; terakhir, skor rubrik, dan refleksi) untuk evaluasi penelitian.
+          </p>
+
+          <div class="btn-group" style="margin-top:0;">
+            <button type="button" class="btn btn-primary" id="btnDownloadStandaloneHTML">
+              🌐 Unduh File HTML VLab Mandiri (.html)
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnDownloadReportJSON">
+              📄 Unduh Laporan Lengkap (JSON)
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnDownloadSummaryCSV">
+              📊 Unduh Rekap Penelitian (CSV)
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnPrintReport">
+              🖨️ Cetak Laporan / PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:24px;">
+          <button type="button" class="btn btn-secondary" onclick="app.goToStage(4)">❮ Kembali ke Data &amp; Analisis</button>
+          <button type="button" class="btn btn-secondary" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            ▲ Ke Atas Halaman
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: ZOOM KLOROPLAS (REAKSI BIOKIMIA & ORGANEL) -->
+  <div class="modal-overlay" id="modalChloroplast" role="dialog" aria-modal="true" aria-labelledby="modalChloroplastTitle">
+    <div class="modal-box" style="max-width: 680px;">
+      <button type="button" class="modal-close-btn" id="btnCloseChloroplastModal" aria-label="Tutup Modal">×</button>
+      <h3 id="modalChloroplastTitle" style="font-size:1.25rem; font-weight:700; margin-bottom:6px; color:var(--color-primary);">
+        🔬 Mode Zoom Kloroplas: Dinamika Reaksi Fotosintesis
+      </h3>
+      <p style="font-size:0.8125rem; color:var(--text-muted); margin-bottom:16px;">
+        Visualisasi penyerapan foton di membran tilakoid (reaksi terang) dan fiksasi CO₂ di stroma (siklus Calvin).
+      </p>
+
+      <!-- SVG Animated Chloroplast Schema -->
+      <div style="background:var(--bg-body); border:1px solid var(--border-strong); border-radius:var(--radius-md); padding:16px; margin-bottom:16px;">
+        <svg viewBox="0 0 540 300" style="width:100%; height:auto;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer Membrane & Inner Membrane -->
+          <ellipse cx="270" cy="150" rx="255" ry="135" fill="#064e3b" stroke="#10b981" stroke-width="3" opacity="0.4"></ellipse>
+          <ellipse cx="270" cy="150" rx="245" ry="125" fill="#022c22" stroke="#059669" stroke-width="1.5"></ellipse>
+          
+          <!-- Stroma Label -->
+          <text x="50" y="55" fill="#34d399" font-size="12" font-weight="700">STROMA (Siklus Calvin)</text>
+
+          <!-- Thylakoid Granum Stack on Left (Reaksi Terang) -->
+          <g id="granumStack" transform="translate(130, 85)">
+            <rect x="0" y="0" width="100" height="130" rx="8" fill="rgba(16, 185, 129, 0.1)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="3,3"></rect>
+            <text x="50" y="-8" fill="#10b981" font-size="11" font-weight="700" text-anchor="middle">TILAKOID (Reaksi Terang)</text>
+            
+            <!-- Discs -->
+            <ellipse cx="50" cy="25" rx="42" ry="12" fill="#047857" stroke="#34d399" stroke-width="1.5"></ellipse>
+            <ellipse cx="50" cy="50" rx="42" ry="12" fill="#047857" stroke="#34d399" stroke-width="1.5"></ellipse>
+            <ellipse cx="50" cy="75" rx="42" ry="12" fill="#047857" stroke="#34d399" stroke-width="1.5"></ellipse>
+            <ellipse cx="50" cy="100" rx="42" ry="12" fill="#047857" stroke="#34d399" stroke-width="1.5"></ellipse>
+            
+            <!-- Sunlight / Photon hitting Thylakoid -->
+            <path d="M-80,-30 L30,20" stroke="#fde047" stroke-width="3" marker-end="url(#arrowSun)" stroke-dasharray="4,2"></path>
+            <text x="-85" y="-35" fill="#facc15" font-size="11" font-weight="700">Foton Cahaya (hν)</text>
+            
+            <!-- H2O in -->
+            <path d="M-50,60 L10,60" stroke="#38bdf8" stroke-width="2.5"></path>
+            <text x="-80" y="64" fill="#38bdf8" font-size="11" font-weight="700">H₂O (Air)</text>
+
+            <!-- O2 Out (Fotolisis) -->
+            <path d="M50,115 L50,160" stroke="#4ade80" stroke-width="3"></path>
+            <circle cx="50" cy="165" r="5" fill="#4ade80"></circle>
+            <text x="50" y="180" fill="#4ade80" font-size="11" font-weight="700" text-anchor="middle">O₂ (Oksigen Dihasilkan)</text>
+          </g>
+
+          <!-- Calvin Cycle on Right in Stroma -->
+          <g id="calvinCycleG" transform="translate(380, 150)">
+            <circle cx="0" cy="0" r="48" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6,4"></circle>
+            <text x="0" y="-5" fill="#e0f2fe" font-size="11" font-weight="700" text-anchor="middle">Siklus</text>
+            <text x="0" y="10" fill="#e0f2fe" font-size="11" font-weight="700" text-anchor="middle">Calvin</text>
+            
+            <!-- CO2 In -->
+            <path d="M0,-90 L0,-50" stroke="#f43f5e" stroke-width="2.5"></path>
+            <text x="0" y="-95" fill="#f43f5e" font-size="11" font-weight="700" text-anchor="middle">CO₂ (dari NaHCO₃)</text>
+
+            <!-- Glucose / Sugar Out -->
+            <path d="M0,50 L0,95" stroke="#f59e0b" stroke-width="2.5"></path>
+            <text x="0" y="112" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">C₆H₁₂O₆ (Gula / Pati)</text>
+          </g>
+
+          <!-- Intermediates: ATP & NADPH flowing Tilakoid -> Calvin -->
+          <path d="M230,120 Q305,100 335,130" stroke="#facc15" stroke-width="2" fill="none" stroke-dasharray="4,4"></path>
+          <text x="285" y="108" fill="#facc15" font-size="10" font-weight="600">ATP &amp; NADPH</text>
+
+          <!-- ADP & NADP+ flowing back -->
+          <path d="M335,170 Q305,200 230,180" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="3,3"></path>
+          <text x="285" y="202" fill="#94a3b8" font-size="9">ADP + Pi &amp; NADP⁺</text>
+        </svg>
+      </div>
+
+      <div style="font-size:0.84rem; color:var(--text-soft); line-height:1.5;">
+        <p style="margin-bottom:8px;">
+          • <strong>Reaksi Terang (Tilakoid):</strong> Klorofil menyerap foton cahaya dan mentransfer energi untuk fotolisis $2H_2O \rightarrow 4H^+ + 4e^- + O_2\uparrow$. Gas inilah yang kamu amati sebagai gelembung di tabung reaksi.
+        </p>
+        <p>
+          • <strong>Reaksi Gelap / Siklus Calvin (Stroma):</strong> Menghasilkan glukosa dengan bantuan enzim RuBisCO menggunakan $CO_2$ terlarut dari bikarbonat ($NaHCO_3$). Tanpa $CO_2$, ATP dan NADPH akan terakumulasi dan reaksi terang akhirnya terhenti (saturasi/faktor pembatas).
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KOMPARASI DUA PERCOBAAN -->
+  <div class="modal-overlay" id="modalCompare" role="dialog" aria-modal="true" aria-labelledby="modalCompareTitle">
+    <div class="modal-box">
+      <button type="button" class="modal-close-btn" id="btnCloseCompareModal" aria-label="Tutup Modal">×</button>
+      <h3 id="modalCompareTitle" style="font-size:1.25rem; font-weight:700; margin-bottom:8px; color:var(--color-primary);">
+        ⚖️ Perbandingan Kuantitatif Antar-Percobaan
+      </h3>
+      <p style="font-size:0.8125rem; color:var(--text-muted); margin-bottom:16px;">
+        Pilih 2 baris percobaan dari daftar yang sudah kamu uji untuk melihat selisih kuantitatif dan analisis dampaknya.
+      </p>
+
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div>
+          <label class="form-label" for="compareSelectA">Percobaan Referensi (A)</label>
+          <select class="form-select" id="compareSelectA"></select>
+        </div>
+        <div>
+          <label class="form-label" for="compareSelectB">Percobaan Pembanding (B)</label>
+          <select class="form-select" id="compareSelectB"></select>
+        </div>
+      </div>
+
+      <div id="compareResultCard" style="background:var(--bg-surface-elevated); border:1px solid var(--border-strong); border-radius:var(--radius-md); padding:16px; font-size:0.875rem;">
+        Pilih dua percobaan di atas untuk melihat perbandingan.
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KONFIRMASI RESET INVESTIGASI -->
+  <div class="modal-overlay" id="modalResetConfirm" role="dialog" aria-modal="true" aria-labelledby="modalResetTitle">
+    <div class="modal-box" style="max-width:440px; text-align:center;">
+      <h3 id="modalResetTitle" style="font-size:1.25rem; font-weight:700; margin-bottom:12px; color:var(--color-danger);">
+        ⚠️ Konfirmasi Ulangi Investigasi
+      </h3>
+      <p style="font-size:0.875rem; color:var(--text-soft); margin-bottom:20px;">
+        Apakah kamu yakin ingin mengulang dari awal? Seluruh data percobaan, skor kuis, dan kesimpulan akan dihapus dari penyimpanan lokal.
+      </p>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <button type="button" class="btn btn-secondary" id="btnCancelReset">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmReset" style="background:var(--color-danger);">
+          Ya, Mulai Baru
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PULIHKAN SESI SEBELUMNYA -->
+  <div class="modal-overlay" id="modalResumeSession" role="dialog" aria-modal="true" aria-labelledby="modalResumeTitle">
+    <div class="modal-box" style="max-width:480px;">
+      <h3 id="modalResumeTitle" style="font-size:1.25rem; font-weight:700; margin-bottom:8px; color:var(--color-primary);">
+        📂 Sesi Investigasi Ditemukan
+      </h3>
+      <p style="font-size:0.875rem; color:var(--text-soft); margin-bottom:16px;" id="resumeSessionMessage">
+        Ditemukan data pengerjaan sebelumnya untuk siswa: <strong id="resumeStudentName"></strong>. Apakah kamu ingin melanjutkan investigasi ini?
+      </p>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-secondary" id="btnResumeNew">Mulai Sesi Baru</button>
+        <button type="button" class="btn btn-primary" id="btnResumeContinue">Lanjutkan Sesi ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <div class="container">
+      <p>PhotoLab: Investigasi Fotosintesis Interaktif (PBL) v2.0</p>
+      <p style="margin-top:4px; font-size:0.75rem;">Media Pembelajaran Sains &amp; Instrumen Kuasi-Eksperimen Fisiologi Fotosintesis (Ingenhousz)</p>
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT VANILLA APPLICATION ==================== -->
+  <script>
+    /**
+     * CONFIG OBJECT: Educational Data, Rubrics, Question Bank, & Physical Constants
+     */
+    const CONFIG = {
+      storageKey: 'photolab_v2',
+      defaultControl: {
+        distance: 20,
+        bicarbonate: 0.2,
+        lightColor: 'white'
+      },
+      colorAbsorption: {
+        white: { factor: 1.0, label: 'Spektrum Penuh (Putih)', nm: '400-700 nm' },
+        blue: { factor: 1.18, label: 'Absorpsi Maksimum (Klorofil a & b)', nm: '430-450 nm' },
+        red: { factor: 1.10, label: 'Absorpsi Tinggi (Klorofil a)', nm: '640-660 nm' },
+        yellow: { factor: 0.45, label: 'Absorpsi Rendah', nm: '570-590 nm' },
+        green: { factor: 0.14, label: 'Transmisi / Dipantulkan (Absorpsi Minimal)', nm: '500-550 nm' }
+      },
+      bicarbonateResponse: {
+        0: 4,      // Very low baseline from trace dissolved atmospheric CO2
+        0.1: 18,
+        0.2: 28,   // Standard baseline
+        0.5: 35,
+        1.0: 36    // Plateau (enzyme RuBisCO / substrate saturation)
+      },
+      quizItems: [
+        {
+          id: 1,
+          cognitive: 'C2',
+          question: 'Pada percobaan Ingenhousz dengan tanaman Hydrilla verticillata, gas yang terakumulasi di ujung tabung reaksi dan fungsi penambahan NaHCO₃ ke dalam air adalah...',
+          options: [
+            { text: 'Gas CO₂ yang dihasilkan dari respirasi sel; NaHCO₃ bertindak sebagai nutrisi garam mineral.', isCorrect: false, explanation: 'Salah. Tanaman menghasilkan gas O₂ pada reaksi terang fotosintesis, bukan gas CO₂.' },
+            { text: 'Gas O₂ yang dihasilkan dari fotolisis air; NaHCO₃ berfungsi menyediakan sumber karbon dioksida terlarut.', isCorrect: true, explanation: 'Tepat sekali! Gas yang dihasilkan adalah oksigen (O₂) hasil fotolisis air di fotosistem II, dan NaHCO₃ terurai menjadi ion bikarbonat penyedia CO₂ terlarut.' },
+            { text: 'Gas H₂ yang dihasilkan dari penguraian air; NaHCO₃ menjaga pH air agar tetap netral.', isCorrect: false, explanation: 'Salah. Penguraian air melepaskan elektron dan proton (H⁺), namun gas yang dibebaskan ke atmosfer adalah O₂.' },
+            { text: 'Gas O₂ yang dihasilkan dari siklus Calvin; NaHCO₃ bertindak sebagai katalis cahaya.', isCorrect: false, explanation: 'Salah. Siklus Calvin berlangsung di stroma dan tidak menghasilkan gas O₂ melainkan glukosa. O₂ dihasilkan di tilakoid.' }
+          ]
+        },
+        {
+          id: 2,
+          cognitive: 'C3',
+          question: 'Berdasarkan Hukum Kuadrat Terbalik (Inverse Square Law), jika jarak lampu terhadap beker dijauhkan dari 20 cm menjadi 40 cm (bertambah 2 kali lipat), maka intensitas cahaya yang diterima tanaman Hydrilla akan menjadi...',
+          options: [
+            { text: '1/2 (50%) dari intensitas semula.', isCorrect: false, explanation: 'Salah. Hubungan jarak dan intensitas adalah kuadratik (1/d²), bukan berbanding terbalik secara linier.' },
+            { text: '1/4 (25%) dari intensitas semula.', isCorrect: true, explanation: 'Benar! Mengikuti rumus I ∝ 1/d², jika jarak menjadi 2 kali lipat (40/20 = 2), maka intensitas menjadi (1/2)² = 1/4 atau 25% dari intensitas semula.' },
+            { text: '1/16 (6,25%) dari intensitas semula.', isCorrect: false, explanation: 'Salah. Penurunan menjadi 1/16 terjadi jika jarak bertambah 4 kali lipat (misalnya dari 10 cm ke 40 cm).' },
+            { text: 'Tetap sama karena daya lampu (watt) tidak berubah.', isCorrect: false, explanation: 'Salah. Meskipun daya lampu tetap, berkas foton menyebar ke segala arah seiring pertambahan jarak sehingga kepadatan fluks foton berkurang drastis.' }
+          ]
+        },
+        {
+          id: 3,
+          cognitive: 'C4',
+          question: 'Mengapa pada perlakuan filter cahaya hijau, laju pembentukan gelembung oksigen selalu menjadi yang paling rendah dibandingkan warna cahaya biru dan merah?',
+          options: [
+            { text: 'Cahaya hijau memiliki energi foton paling merusak klorofil.', isCorrect: false, explanation: 'Salah. Cahaya hijau tidak merusak klorofil; spektrum inilah yang tidak diserap.' },
+            { text: 'Pigmen klorofil a dan b paling sedikit menyerap spektrum hijau (500–550 nm) dan sebagian besar dipantulkan atau diteruskan.', isCorrect: true, explanation: 'Sangat tepat! Klorofil tampak berwarna hijau bagi mata kita justru karena panjang gelombang hijau dipantulkan dan tidak diserap untuk eksitasi fotosistem.' },
+            { text: 'Cahaya hijau menghambat disosiasi NaHCO₃ di dalam air.', isCorrect: false, explanation: 'Salah. Warna cahaya tidak berpengaruh pada sifat kelarutan garam anorganik NaHCO₃.' },
+            { text: 'Cahaya hijau diserap sempurna oleh karotenoid sehingga klorofil tidak kebagian foton.', isCorrect: false, explanation: 'Salah. Karotenoid terutama menyerap spektrum biru-kehijauan, bukan spektrum hijau murni.' }
+          ]
+        },
+        {
+          id: 4,
+          cognitive: 'C4',
+          question: 'Ketika jarak lampu didekatkan dari 20 cm ke 10 cm, intensitas cahaya melonjak 4 kali lipat, namun laju fotosintesis hanya meningkat sedikit lalu mendatar (plateau). Fenomena biologis ini paling tepat dijelaskan oleh...',
+          options: [
+            { text: 'Tanaman Hydrilla mengalami kematian akibat keracunan kelebihan oksigen.', isCorrect: false, explanation: 'Salah. Tanaman air memiliki rongga aerenkim dan toleransi tinggi terhadap pelepasan O₂.' },
+            { text: 'Hukum Faktor Pembatas Blackman: kapasitas enzim fotosintesis (seperti RuBisCO) atau ketersediaan CO₂ telah mencapai titik jenuh (light saturation point).', isCorrect: true, explanation: 'Luar biasa, tepat! Pada intensitas cahaya yang sangat tinggi, laju reaksi tidak lagi dibatasi oleh foton, melainkan oleh faktor pembatas lain seperti ketersediaan CO₂ dan laju turnover enzim Calvin.' },
+            { text: 'Hukum Termodinamika: energi cahaya diubah menjadi energi panas sepenuhnya.', isCorrect: false, explanation: 'Salah. Fotosintesis tetap berlangsung efisien namun mencapai laju maksimum kapasitas biokimiawinya.' },
+            { text: 'Gelembung gas tidak bisa terbentuk lagi karena tekanan hidrostatis air meningkat.', isCorrect: false, explanation: 'Salah. Tekanan hidrostatis air pada kedalaman beker yang konstan tidak berubah.' }
+          ]
+        },
+        {
+          id: 5,
+          cognitive: 'C3',
+          question: 'Dalam metodologi penelitian kuasi-eksperimen sains, mengapa perlakuan kontrol baku (jarak 20 cm, NaHCO₃ 0,2%, cahaya putih) wajib dijalankan terlebih dahulu sebelum perlakuan lainnya?',
+          options: [
+            { text: 'Sebagai formalitas agar laporan praktikum memenuhi syarat administrasi.', isCorrect: false, explanation: 'Salah. Kontrol adalah landasan metodologi saintifik untuk komparasi berbasis bukti.' },
+            { text: 'Sebagai titik acuan (baseline) pembanding valid untuk mengukur secara pasti besarnya efek atau perubahan yang diakibatkan oleh setiap variabel manipulasi.', isCorrect: true, explanation: 'Tepat sekali! Percobaan kontrol menetapkan tolok ukur standar sehingga efek perubahan jarak, bikarbonat, atau warna dapat dihitung secara komparatif.' },
+            { text: 'Untuk memastikan semua gelembung di tangkai tanaman habis sebelum eksperimen dimulai.', isCorrect: false, explanation: 'Salah. Tanaman yang sehat terus menghasilkan gelembung selama fotosintesis aktif.' },
+            { text: 'Agar tanaman Hydrilla terbiasa dengan air beker sebelum diuji.', isCorrect: false, explanation: 'Salah. Aklimatisasi tanaman berbeda tujuannya dengan peran kelompok perlakuan kontrol.' }
+          ]
+        }
+      ],
+      rubricKeywords: {
+        relation: ['jarak', 'intensitas', 'konsentrasi', 'bikarbonat', 'warna', 'panjang gelombang', 'meningkat', 'menurun', 'sebanding', 'berbanding terbalik'],
+        dataRef: ['rata-rata', 'mean', 'sd', 'gelembung', 'angka', '0,2', '20 cm', '10 cm', '0.2', 'persen', '%', 'ulangan'],
+        scientificReason: ['foton', 'klorofil', 'fotolisis', 'reaksi terang', 'tilakoid', 'siklus calvin', 'stroma', 'faktor pembatas', 'saturasi', 'kuadrat terbalik', 'absorpsi', 'rubisco'],
+        hypothesisVerif: ['hipotesis', 'didukung', 'terbukti', 'diterima', 'ditolak', 'sesuai', 'tidak sesuai']
+      }
+    };
+
+    /**
+     * SAFE STORAGE WRAPPER (Handles private browsing / disabled localStorage gracefully)
+     */
+    const Storage = {
+      isAvailable() {
+        try {
+          const test = '__test__';
+          localStorage.setItem(test, test);
+          localStorage.removeItem(test);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      get(key) {
+        try {
+          if (!this.isAvailable()) return null;
+          const val = localStorage.getItem(key);
+          return val ? JSON.parse(val) : null;
+        } catch (e) {
+          console.warn('Storage.get error:', e);
+          return null;
+        }
+      },
+      set(key, val) {
+        try {
+          if (!this.isAvailable()) return false;
+          localStorage.setItem(key, JSON.stringify(val));
+          return true;
+        } catch (e) {
+          console.warn('Storage.set error:', e);
+          return false;
+        }
+      },
+      remove(key) {
+        try {
+          if (!this.isAvailable()) return;
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn('Storage.remove error:', e);
+        }
+      }
+    };
+
+    /**
+     * APPLICATION CONTROLLER & STATE MANAGEMENT
+     */
+    class PhotoLabApp {
+      constructor() {
+        this.state = {
+          theme: 'dark',
+          currentStage: 0,
+          student: {
+            name: '',
+            class: '',
+            group: '',
+            startTime: Date.now()
+          },
+          stageTimestamps: {
+            0: Date.now(),
+            1: null,
+            2: null,
+            3: null,
+            4: null,
+            5: null
+          },
+          stageDurationSeconds: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+          problem: {
+            statement: '',
+            hypothesis: ''
+          },
+          variableDesign: {
+            manipulated: '',
+            responding: '',
+            controlled: '',
+            verified: false
+          },
+          experiments: [], // Array of { id, type: 'control'|'treatment', distance, bicarbonate, color, replications: [n1, n2, ...], mean, sd }
+          quiz: {
+            answers: {},
+            firstScore: null,
+            lastScore: null,
+            submitted: false
+          },
+          conclusionText: '',
+          rubricScore: 0,
+          rubricDetails: [false, false, false, false],
+          reflections: {
+            errorSource: '',
+            improvements: '',
+            futureResearch: ''
+          }
+        };
+
+        this.simTimer = null;
+        this.simSecondsLeft = 0;
+        this.simBubbleCounter = 0;
+        this.isSimulating = false;
+        this.activeChartTab = 'distance';
+        this.chartInstance = null;
+
+        // Initialize Audio context for gentle realistic bubble pop
+        this.audioCtx = null;
+      }
+
+      init() {
+        this.setupEventListeners();
+        this.loadOrPromptSession();
+        this.renderStage(this.state.currentStage);
+        this.startStageTimerTicker();
+        this.updateTheme();
+      }
+
+      playBubbleSound() {
+        try {
+          if (!this.audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.audioCtx = new AudioContext();
+          }
+          if (this.audioCtx && this.audioCtx.state === 'running') {
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+            const now = this.audioCtx.currentTime;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600 + Math.random() * 300, now);
+            osc.frequency.exponentialRampToValueAtTime(1400, now + 0.06);
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.07);
+          }
+        } catch (e) {
+          // Audio autoplay policy ignored
+        }
+      }
+
+      saveState() {
+        Storage.set(CONFIG.storageKey, this.state);
+      }
+
+      loadOrPromptSession() {
+        const saved = Storage.get(CONFIG.storageKey);
+        if (saved && saved.student && saved.student.name) {
+          document.getElementById('resumeStudentName').textContent = saved.student.name + ' (' + (saved.student.class || 'Kelas -') + ')';
+          document.getElementById('modalResumeSession').classList.add('open');
+          this.cachedSavedState = saved;
+        }
+      }
+
+      restoreSession() {
+        if (this.cachedSavedState) {
+          this.state = this.cachedSavedState;
+          document.getElementById('headerStudentName').textContent = this.state.student.name + ' - ' + this.state.student.class;
+          
+          // Populate fields
+          document.getElementById('inputStudentName').value = this.state.student.name || '';
+          document.getElementById('inputStudentClass').value = this.state.student.class || '';
+          document.getElementById('inputStudentGroup').value = this.state.student.group || '';
+          document.getElementById('inputProblemStatement').value = this.state.problem.statement || '';
+          document.getElementById('inputHypothesis').value = this.state.problem.hypothesis || '';
+          document.getElementById('textareaConclusion').value = this.state.conclusionText || '';
+          document.getElementById('reflectErrorSource').value = this.state.reflections.errorSource || '';
+          document.getElementById('reflectImprovements').value = this.state.reflections.improvements || '';
+          document.getElementById('reflectFutureResearch').value = this.state.reflections.futureResearch || '';
+
+          this.updateVariableValidationUI();
+          this.evaluateRubricRealtime();
+          this.checkLabGates();
+          this.renderDataTable();
+          this.renderQuiz();
+          this.renderChart();
+          this.generateSmartTrend();
+          this.goToStage(this.state.currentStage || 0);
+        }
+        document.getElementById('modalResumeSession').classList.remove('open');
+      }
+
+      resetSession() {
+        Storage.remove(CONFIG.storageKey);
+        window.location.reload();
+      }
+
+      setupEventListeners() {
+        // Theme Toggle
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+          this.state.theme = this.state.theme === 'dark' ? 'light' : 'dark';
+          this.updateTheme();
+          this.saveState();
+        });
+
+        // Reset App modal
+        document.getElementById('resetAppBtn').addEventListener('click', () => {
+          document.getElementById('modalResetConfirm').classList.add('open');
+        });
+        document.getElementById('btnCancelReset').addEventListener('click', () => {
+          document.getElementById('modalResetConfirm').classList.remove('open');
+        });
+        document.getElementById('btnConfirmReset').addEventListener('click', () => {
+          this.resetSession();
+        });
+
+        // Resume modal buttons
+        document.getElementById('btnResumeContinue').addEventListener('click', () => {
+          this.restoreSession();
+        });
+        document.getElementById('btnResumeNew').addEventListener('click', () => {
+          document.getElementById('modalResumeSession').classList.remove('open');
+          Storage.remove(CONFIG.storageKey);
+        });
+
+        // PBL Tabs Click Delegation
+        document.getElementById('pblNavTabs').addEventListener('click', (e) => {
+          const tab = e.target.closest('.nav-tab');
+          if (tab && !tab.disabled) {
+            const stage = parseInt(tab.dataset.stage, 10);
+            this.goToStage(stage);
+          }
+        });
+
+        // Stage 0: Identity Form Submit
+        document.getElementById('studentIdentityForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('inputStudentName').value.trim();
+          const sClass = document.getElementById('inputStudentClass').value.trim();
+          const group = document.getElementById('inputStudentGroup').value.trim();
+
+          if (!name || !sClass) {
+            alert('Mohon lengkapi Nama Lengkap dan Kelas!');
+            return;
+          }
+
+          this.state.student.name = name;
+          this.state.student.class = sClass;
+          this.state.student.group = group;
+          document.getElementById('headerStudentName').textContent = `${name} - ${sClass}`;
+          
+          this.saveState();
+          this.unlockStage(1);
+          this.goToStage(1);
+        });
+
+        // Stage 1: Validate Hypothesis
+        document.getElementById('btnValidateHypothesis').addEventListener('click', () => {
+          const statement = document.getElementById('inputProblemStatement').value.trim();
+          const hypothesis = document.getElementById('inputHypothesis').value.trim();
+          const alertBox = document.getElementById('hypothesisAlert');
+
+          if (!statement) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+            alertBox.style.color = 'var(--color-danger)';
+            alertBox.textContent = 'Silakan tuliskan rumusan masalah terlebih dahulu.';
+            return;
+          }
+
+          const lower = hypothesis.toLowerCase();
+          const hasJika = lower.includes('jika');
+          const hasMaka = lower.includes('maka');
+          const hasKarena = lower.includes('karena');
+
+          if (!hasJika || !hasMaka || !hasKarena || hypothesis.length < 30) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(245, 158, 11, 0.15)';
+            alertBox.style.color = 'var(--color-accent)';
+            alertBox.innerHTML = '<strong>Format belum lengkap:</strong> Pastikan hipotesis memuat kata <strong>"Jika"</strong>, <strong>"maka"</strong>, dan <strong>"karena"</strong> dengan alasan biologis yang jelas.';
+            return;
+          }
+
+          alertBox.style.display = 'block';
+          alertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          alertBox.style.color = 'var(--color-primary)';
+          alertBox.textContent = '✓ Rumusan masalah dan hipotesis ilmiah tervalidasi!';
+
+          this.state.problem.statement = statement;
+          this.state.problem.hypothesis = hypothesis;
+          this.saveState();
+          this.unlockStage(2);
+          setTimeout(() => this.goToStage(2), 600);
+        });
+
+        // Stage 2: Check Variables
+        document.getElementById('btnCheckVariables').addEventListener('click', () => {
+          this.checkVariableDesign();
+        });
+        document.getElementById('btnProceedToLab').addEventListener('click', () => {
+          if (this.state.variableDesign.verified) {
+            this.unlockStage(3);
+            this.goToStage(3);
+          }
+        });
+
+        // Stage 3: Lab Controls
+        const distSlider = document.getElementById('sliderDistance');
+        distSlider.addEventListener('input', () => {
+          this.updateIntensityHUD();
+          this.updateApparatusVisuals();
+        });
+
+        document.querySelectorAll('input[name="lightColor"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+            this.updateApparatusVisuals();
+          });
+        });
+
+        document.getElementById('btnApplyControlPreset').addEventListener('click', () => {
+          this.applyControlPreset();
+        });
+
+        document.getElementById('btnRunExperiment').addEventListener('click', () => {
+          this.runSimulation(60);
+        });
+
+        document.getElementById('btnFastRecord').addEventListener('click', () => {
+          this.runSimulation(5); // Fast-forward 5s simulation
+        });
+
+        document.getElementById('btnProceedToData').addEventListener('click', () => {
+          if (this.checkLabGates()) {
+            this.unlockStage(4);
+            this.goToStage(4);
+          }
+        });
+
+        // Accordion Key Concepts
+        document.getElementById('btnToggleConcepts').addEventListener('click', () => {
+          const item = document.getElementById('accordionKeyConcepts');
+          item.classList.toggle('open');
+          const isOpen = item.classList.contains('open');
+          document.getElementById('btnToggleConcepts').setAttribute('aria-expanded', isOpen);
+        });
+
+        // Modals
+        document.getElementById('btnOpenChloroplastModal').addEventListener('click', () => {
+          document.getElementById('modalChloroplast').classList.add('open');
+        });
+        document.getElementById('btnCloseChloroplastModal').addEventListener('click', () => {
+          document.getElementById('modalChloroplast').classList.remove('open');
+        });
+
+        document.getElementById('btnOpenCompareModal').addEventListener('click', () => {
+          this.populateCompareModal();
+          document.getElementById('modalCompare').classList.add('open');
+        });
+        document.getElementById('btnCloseCompareModal').addEventListener('click', () => {
+          document.getElementById('modalCompare').classList.remove('open');
+        });
+
+        document.getElementById('compareSelectA').addEventListener('change', () => this.updateCompareDiff());
+        document.getElementById('compareSelectB').addEventListener('change', () => this.updateCompareDiff());
+
+        // Stage 4: Chart Filters
+        document.getElementById('btnFilterDistanceChart').addEventListener('click', () => this.setChartTab('distance'));
+        document.getElementById('btnFilterColorChart').addEventListener('click', () => this.setChartTab('color'));
+        document.getElementById('btnFilterBicarbChart').addEventListener('click', () => this.setChartTab('bicarbonate'));
+
+        // Stage 4: Downloads
+        document.getElementById('btnDownloadCSV').addEventListener('click', () => this.exportCSVData());
+
+        // Stage 5: Rubrics & Reflections Realtime
+        document.getElementById('textareaConclusion').addEventListener('input', () => {
+          this.state.conclusionText = document.getElementById('textareaConclusion').value;
+          this.evaluateRubricRealtime();
+          this.saveState();
+        });
+
+        ['reflectErrorSource', 'reflectImprovements', 'reflectFutureResearch'].forEach(id => {
+          document.getElementById(id).addEventListener('input', (e) => {
+            const key = id.replace('reflect', '');
+            const field = key.charAt(0).toLowerCase() + key.slice(1);
+            this.state.reflections[field] = e.target.value;
+            this.saveState();
+          });
+        });
+
+        document.getElementById('btnSubmitQuiz').addEventListener('click', () => {
+          this.submitQuiz();
+        });
+
+        // Stage 5 & Header: Final Exports & HTML Download
+        const onDownloadHtml = () => this.downloadStandaloneHTML();
+        const headerDownloadBtn = document.getElementById('btnHeaderDownloadHTML');
+        if (headerDownloadBtn) headerDownloadBtn.addEventListener('click', onDownloadHtml);
+        const stageDownloadBtn = document.getElementById('btnDownloadStandaloneHTML');
+        if (stageDownloadBtn) stageDownloadBtn.addEventListener('click', onDownloadHtml);
+
+        document.getElementById('btnDownloadReportJSON').addEventListener('click', () => this.exportJSONReport());
+        document.getElementById('btnDownloadSummaryCSV').addEventListener('click', () => this.exportSummaryCSV());
+        document.getElementById('btnPrintReport').addEventListener('click', () => {
+          this.preparePrintView();
+          window.print();
+        });
+      }
+
+      updateTheme() {
+        document.documentElement.setAttribute('data-theme', this.state.theme);
+        const icon = this.state.theme === 'dark' ? '☀️' : '🌙';
+        document.getElementById('themeToggleBtn').textContent = icon;
+        this.renderChart();
+      }
+
+      startStageTimerTicker() {
+        setInterval(() => {
+          const cur = this.state.currentStage;
+          this.state.stageDurationSeconds[cur] = (this.state.stageDurationSeconds[cur] || 0) + 1;
+        }, 1000);
+      }
+
+      unlockStage(stageNum) {
+        const tab = document.getElementById(`tabStage${stageNum}`);
+        if (tab) tab.removeAttribute('disabled');
+      }
+
+      goToStage(stageNum) {
+        if (this.isSimulating) {
+          alert('Percobaan laboratorium sedang berjalan. Mohon tunggu hingga penghitungan selesai.');
+          return;
+        }
+
+        // Record timestamp for stage entry
+        if (!this.state.stageTimestamps[stageNum]) {
+          this.state.stageTimestamps[stageNum] = Date.now();
+        }
+
+        this.state.currentStage = stageNum;
+        this.renderStage(stageNum);
+        this.saveState();
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      renderStage(stageNum) {
+        // Update nav tabs
+        for (let i = 0; i <= 5; i++) {
+          const tab = document.getElementById(`tabStage${i}`);
+          const sec = document.getElementById(`stageSection${i}`);
+          if (tab && sec) {
+            if (i === stageNum) {
+              tab.classList.add('active');
+              sec.style.display = 'block';
+            } else {
+              tab.classList.remove('active');
+              sec.style.display = 'none';
+              if (i < stageNum) tab.classList.add('completed');
+            }
+          }
+        }
+
+        // Specific stage rendering
+        if (stageNum === 3) {
+          this.updateIntensityHUD();
+          this.updateApparatusVisuals();
+          this.checkLabGates();
+        } else if (stageNum === 4) {
+          this.renderDataTable();
+          this.renderChart();
+          this.generateSmartTrend();
+        } else if (stageNum === 5) {
+          this.renderQuiz();
+          this.evaluateRubricRealtime();
+        }
+      }
+
+      checkVariableDesign() {
+        const manip = document.getElementById('selectVarManipulated').value;
+        const resp = document.getElementById('selectVarResponding').value;
+        const ctrl = document.getElementById('selectVarControlled').value;
+
+        const statManip = document.getElementById('statusVarManipulated');
+        const statResp = document.getElementById('statusVarResponding');
+        const statCtrl = document.getElementById('statusVarControlled');
+        const feedback = document.getElementById('variableFeedbackBox');
+        const btnProceed = document.getElementById('btnProceedToLab');
+
+        let isManipOk = (manip === 'jarak_cahaya');
+        let isRespOk = (resp === 'gelembung');
+        let isCtrlOk = (ctrl === 'kontrol_baku');
+
+        statManip.innerHTML = isManipOk 
+          ? '<span style="color:var(--color-primary); font-weight:700;">✓ Benar</span>' 
+          : '<span style="color:var(--color-danger); font-weight:700;">✗ Salah</span> (Pilih Jarak Lampu / Intensitas)';
+        
+        statResp.innerHTML = isRespOk 
+          ? '<span style="color:var(--color-primary); font-weight:700;">✓ Benar</span>' 
+          : '<span style="color:var(--color-danger); font-weight:700;">✗ Salah</span> (Pilih Jumlah Gelembung O₂)';
+
+        statCtrl.innerHTML = isCtrlOk 
+          ? '<span style="color:var(--color-primary); font-weight:700;">✓ Benar</span>' 
+          : '<span style="color:var(--color-danger); font-weight:700;">✗ Salah</span> (Pilih Spesies, Volume & Suhu Konstan)';
+
+        feedback.style.display = 'block';
+        if (isManipOk && isRespOk && isCtrlOk) {
+          feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+          feedback.style.color = 'var(--color-primary)';
+          feedback.innerHTML = '<strong>Sempurna!</strong> Kamu telah mengidentifikasi variabel manipulasi, respons, dan kontrol dengan benar. Laboratorium virtual kini siap digunakan.';
+          this.state.variableDesign.verified = true;
+          this.state.variableDesign.manipulated = manip;
+          this.state.variableDesign.responding = resp;
+          this.state.variableDesign.controlled = ctrl;
+          btnProceed.removeAttribute('disabled');
+          this.saveState();
+        } else {
+          feedback.style.background = 'rgba(239, 68, 68, 0.12)';
+          feedback.style.color = 'var(--color-danger)';
+          feedback.innerHTML = 'Beberapa pilihan masih kurang tepat. Ingat bahwa variabel bebas adalah faktor yang kita ubah (Jarak), variabel respons adalah reaksi biokimia (Gelembung O₂), dan kontrol harus dijaga tetap.';
+          btnProceed.setAttribute('disabled', 'true');
+        }
+      }
+
+      updateVariableValidationUI() {
+        if (this.state.variableDesign.verified) {
+          document.getElementById('selectVarManipulated').value = this.state.variableDesign.manipulated || 'jarak_cahaya';
+          document.getElementById('selectVarResponding').value = this.state.variableDesign.responding || 'gelembung';
+          document.getElementById('selectVarControlled').value = this.state.variableDesign.controlled || 'kontrol_baku';
+          document.getElementById('btnProceedToLab').removeAttribute('disabled');
+          this.unlockStage(3);
+        }
+      }
+
+      applyControlPreset() {
+        document.getElementById('sliderDistance').value = CONFIG.defaultControl.distance;
+        document.getElementById('selectBicarbonate').value = CONFIG.defaultControl.bicarbonate;
+        const whiteRadio = document.querySelector('input[name="lightColor"][value="white"]');
+        if (whiteRadio) whiteRadio.checked = true;
+        this.updateIntensityHUD();
+        this.updateApparatusVisuals();
+      }
+
+      updateIntensityHUD() {
+        const d = parseFloat(document.getElementById('sliderDistance').value);
+        // Inverse square law relative to baseline 20 cm = 100%
+        // I = (20 / d)^2 * 100%
+        const relPercent = Math.round((Math.pow(20 / d, 2)) * 100);
+        document.getElementById('badgeIntensity').textContent = `Intensitas: ${relPercent}% (Relatif)`;
+
+        // Estimate bubble rate
+        const estRate = this.calculateBubbleRate(d, parseFloat(document.getElementById('selectBicarbonate').value), this.getSelectedLightColor());
+        document.getElementById('hudRateEst').textContent = `~${estRate} /mnt`;
+      }
+
+      getSelectedLightColor() {
+        const el = document.querySelector('input[name="lightColor"]:checked');
+        return el ? el.value : 'white';
+      }
+
+      updateApparatusVisuals() {
+        const d = parseFloat(document.getElementById('sliderDistance').value);
+        const color = this.getSelectedLightColor();
+
+        // Adjust Lamp translation based on distance (10 cm -> closer, 50 cm -> farther)
+        // Map 10cm -> x:60, 50cm -> x:-30
+        const lampX = 60 - ((d - 10) / 40) * 85;
+        const lampEl = document.getElementById('lampApparatus');
+        if (lampEl) lampEl.setAttribute('transform', `translate(${lampX}, 80)`);
+
+        // Light color filter map
+        const colorMap = {
+          white: 'rgba(255, 255, 255, 0.22)',
+          blue: 'rgba(59, 130, 246, 0.35)',
+          red: 'rgba(239, 68, 68, 0.35)',
+          yellow: 'rgba(234, 179, 8, 0.35)',
+          green: 'rgba(34, 197, 94, 0.3)'
+        };
+        const beam = document.getElementById('svgLightCone');
+        if (beam) beam.setAttribute('fill', colorMap[color] || colorMap.white);
+
+        const halo = document.getElementById('lightHaloOverlay');
+        if (halo) {
+          const haloMap = {
+            white: 'radial-gradient(circle at 40% 50%, rgba(255,255,255,0.15), transparent 70%)',
+            blue: 'radial-gradient(circle at 40% 50%, rgba(59,130,246,0.2), transparent 70%)',
+            red: 'radial-gradient(circle at 40% 50%, rgba(239,68,68,0.2), transparent 70%)',
+            yellow: 'radial-gradient(circle at 40% 50%, rgba(234,179,8,0.2), transparent 70%)',
+            green: 'radial-gradient(circle at 40% 50%, rgba(34,197,94,0.15), transparent 70%)'
+          };
+          halo.style.background = haloMap[color] || haloMap.white;
+        }
+
+        this.updateIntensityHUD();
+      }
+
+      calculateBubbleRate(distance, bicarb, color) {
+        // 1. Light intensity factor: based on inverse square law with saturation plateau
+        // At 20cm -> factor 1.0 (baseline)
+        // At 10cm -> factor 1.45 (plateau due to RuBisCO enzyme limits)
+        // At 30cm -> factor 0.65
+        // At 40cm -> factor 0.38
+        // At 50cm -> factor 0.22
+        let lightFactor = 1.0;
+        if (distance === 10) lightFactor = 1.48;
+        else if (distance === 20) lightFactor = 1.0;
+        else if (distance === 30) lightFactor = 0.62;
+        else if (distance === 40) lightFactor = 0.36;
+        else if (distance === 50) lightFactor = 0.22;
+        else {
+          lightFactor = Math.min(1.5, Math.pow(20 / distance, 1.35));
+        }
+
+        // 2. Bicarbonate substrate factor
+        const bicarbBase = CONFIG.bicarbonateResponse[bicarb] !== undefined ? CONFIG.bicarbonateResponse[bicarb] : 28;
+
+        // 3. Color wavelength absorption factor
+        const colorFactor = (CONFIG.colorAbsorption[color] ? CONFIG.colorAbsorption[color].factor : 1.0);
+
+        // Raw expected bubbles per minute
+        let rate = Math.round(bicarbBase * lightFactor * colorFactor);
+        return Math.max(1, rate);
+      }
+
+      runSimulation(durationSeconds) {
+        if (this.isSimulating) return;
+
+        // Unlock audio context on user gesture
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+
+        const distance = parseFloat(document.getElementById('sliderDistance').value);
+        const bicarbonate = parseFloat(document.getElementById('selectBicarbonate').value);
+        const color = this.getSelectedLightColor();
+
+        // Calculate expected count with slight natural biological variance (SD ~ 1.5 - 2.5)
+        const expectedPerMin = this.calculateBubbleRate(distance, bicarbonate, color);
+        const variance = Math.round((Math.random() - 0.5) * 4); // +/- 2 bubbles
+        const finalRecordedCount = Math.max(1, expectedPerMin + variance);
+
+        this.isSimulating = true;
+        this.simSecondsLeft = durationSeconds;
+        this.simBubbleCounter = 0;
+
+        const btnRun = document.getElementById('btnRunExperiment');
+        const btnFast = document.getElementById('btnFastRecord');
+        btnRun.setAttribute('disabled', 'true');
+        btnFast.setAttribute('disabled', 'true');
+        btnRun.textContent = `⏳ Mengamati (${durationSeconds}s)...`;
+
+        const hudTimer = document.getElementById('hudTimer');
+        const hudCount = document.getElementById('hudBubbleCount');
+
+        const bubbleContainer = document.getElementById('svgBubbleContainer');
+        bubbleContainer.innerHTML = '';
+
+        // Interval rate for bubble appearance
+        const bubbleIntervalMs = (durationSeconds * 1000) / finalRecordedCount;
+        let nextBubbleTime = 0;
+        const startTime = Date.now();
+        const totalDurationMs = durationSeconds * 1000;
+
+        if (this.simTimer) clearInterval(this.simTimer);
+
+        this.simTimer = setInterval(() => {
+          const elapsed = Date.now() - startTime;
+          const remainingSec = Math.max(0, Math.ceil((totalDurationMs - elapsed) / 1000));
+          
+          const min = String(Math.floor(remainingSec / 60)).padStart(2, '0');
+          const sec = String(remainingSec % 60).padStart(2, '0');
+          hudTimer.textContent = `${min}:${sec}`;
+
+          // Spawn bubbles
+          if (elapsed >= nextBubbleTime && this.simBubbleCounter < finalRecordedCount) {
+            this.simBubbleCounter++;
+            hudCount.textContent = this.simBubbleCounter;
+            this.spawnSvgBubble(bubbleContainer);
+            this.playBubbleSound();
+            nextBubbleTime += bubbleIntervalMs * (0.8 + Math.random() * 0.4);
+          }
+
+          if (elapsed >= totalDurationMs) {
+            clearInterval(this.simTimer);
+            this.simBubbleCounter = finalRecordedCount;
+            hudCount.textContent = finalRecordedCount;
+            hudTimer.textContent = '00:00';
+            this.isSimulating = false;
+            btnRun.removeAttribute('disabled');
+            btnFast.removeAttribute('disabled');
+            btnRun.textContent = '▶ Mulai Pengamatan (60 Detik)';
+
+            // Record this trial in experiment database
+            this.recordExperimentTrial(distance, bicarbonate, color, finalRecordedCount);
+          }
+        }, 50);
+      }
+
+      spawnSvgBubble(container) {
+        // Create an animated SVG bubble rising inside the inverted funnel stem & test tube
+        // Funnel stem is at x: 120, y: 180 rising to y: 60
+        const bubble = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const startX = 118 + (Math.random() - 0.5) * 6;
+        const radius = 2 + Math.random() * 1.5;
+        bubble.setAttribute('cx', startX);
+        bubble.setAttribute('cy', 180);
+        bubble.setAttribute('r', radius);
+        bubble.setAttribute('fill', 'rgba(255, 255, 255, 0.7)');
+        bubble.setAttribute('stroke', 'rgba(56, 189, 248, 0.8)');
+        bubble.setAttribute('stroke-width', '0.7');
+
+        container.appendChild(bubble);
+
+        // Animate up
+        let y = 180;
+        const speed = 1.6 + Math.random() * 0.8;
+        const floatInterval = setInterval(() => {
+          y -= speed;
+          bubble.setAttribute('cy', y);
+          bubble.setAttribute('cx', startX + Math.sin(y / 10) * 2);
+
+          if (y <= 62) {
+            clearInterval(floatInterval);
+            if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+          }
+        }, 30);
+      }
+
+      recordExperimentTrial(distance, bicarbonate, color, count) {
+        const isControl = (distance === CONFIG.defaultControl.distance &&
+                           bicarbonate === CONFIG.defaultControl.bicarbonate &&
+                           color === CONFIG.defaultControl.lightColor);
+
+        // Look for existing experiment with same conditions
+        let exp = this.state.experiments.find(e => 
+          e.distance === distance && 
+          e.bicarbonate === bicarbonate && 
+          e.color === color
+        );
+
+        if (!exp) {
+          exp = {
+            id: 'EXP_' + Date.now().toString(36),
+            type: isControl ? 'control' : 'treatment',
+            distance,
+            bicarbonate,
+            color,
+            replications: [count],
+            mean: count,
+            sd: 0
+          };
+          // Control condition always inserted first
+          if (isControl) {
+            this.state.experiments.unshift(exp);
+          } else {
+            this.state.experiments.push(exp);
+          }
+        } else {
+          exp.replications.push(count);
+          // Recalculate mean and sample standard deviation
+          const n = exp.replications.length;
+          const sum = exp.replications.reduce((a, b) => a + b, 0);
+          exp.mean = parseFloat((sum / n).toFixed(1));
+
+          if (n > 1) {
+            const variance = exp.replications.reduce((acc, val) => acc + Math.pow(val - exp.mean, 2), 0) / (n - 1);
+            exp.sd = parseFloat(Math.sqrt(variance).toFixed(1));
+          } else {
+            exp.sd = 0;
+          }
+        }
+
+        this.saveState();
+        this.checkLabGates();
+        this.renderDataTable();
+        this.renderChart();
+        this.generateSmartTrend();
+
+        // Notification badge
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.right = '20px';
+        toast.style.background = 'var(--color-primary)';
+        toast.style.color = 'var(--text-inverse)';
+        toast.style.padding = '12px 18px';
+        toast.style.borderRadius = 'var(--radius-md)';
+        toast.style.boxShadow = 'var(--shadow-lg)';
+        toast.style.fontWeight = '700';
+        toast.style.zIndex = '999';
+        toast.textContent = `✓ Data Ulangan ke-${exp.replications.length} Tercatat: ${count} gelembung/menit`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      }
+
+      checkLabGates() {
+        const hasControl = this.state.experiments.some(e => e.type === 'control' && e.replications.length >= 1);
+        const distinctTreatments = this.state.experiments.filter(e => e.type === 'treatment').length;
+        const hasEnoughVariations = distinctTreatments >= 3;
+        
+        // Every registered experiment should have >= 2 replications
+        const allHaveTwoReps = this.state.experiments.length >= 4 && 
+          this.state.experiments.every(e => e.replications.length >= 2);
+
+        // Update UI Checkboxes
+        const gateCtrl = document.getElementById('checkGateControl');
+        const gateVar = document.getElementById('checkGateVariations');
+        const gateRep = document.getElementById('checkGateReplications');
+        const btnProceed = document.getElementById('btnProceedToData');
+
+        if (hasControl) {
+          gateCtrl.className = 'gate-checkbox checked';
+        } else {
+          gateCtrl.className = 'gate-checkbox unchecked';
+        }
+
+        document.getElementById('textGateVariations').textContent = `2. Minimal 3 nilai perlakuan berbeda telah diuji (Progres: ${distinctTreatments} / 3).`;
+        if (hasEnoughVariations) {
+          gateVar.className = 'gate-checkbox checked';
+        } else {
+          gateVar.className = 'gate-checkbox unchecked';
+        }
+
+        if (allHaveTwoReps) {
+          gateRep.className = 'gate-checkbox checked';
+        } else {
+          gateRep.className = 'gate-checkbox unchecked';
+        }
+
+        const canProceed = hasControl && hasEnoughVariations && allHaveTwoReps;
+        if (canProceed) {
+          btnProceed.removeAttribute('disabled');
+        } else {
+          btnProceed.setAttribute('disabled', 'true');
+        }
+
+        return canProceed;
+      }
+
+      deleteExperimentRow(id) {
+        this.state.experiments = this.state.experiments.filter(e => e.id !== id);
+        this.saveState();
+        this.checkLabGates();
+        this.renderDataTable();
+        this.renderChart();
+        this.generateSmartTrend();
+      }
+
+      renderDataTable() {
+        const tbody = document.getElementById('dataTableBody');
+        const compareBtn = document.getElementById('btnOpenCompareModal');
+        if (!tbody) return;
+
+        if (this.state.experiments.length < 2) {
+          compareBtn.setAttribute('disabled', 'true');
+        } else {
+          compareBtn.removeAttribute('disabled');
+        }
+
+        if (this.state.experiments.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-muted);">Belum ada data pengamatan. Jalankan percobaan di laboratorium virtual (Tahap 3).</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = this.state.experiments.map((exp, idx) => {
+          const badge = exp.type === 'control' 
+            ? '<span class="tag-control">Kontrol Standar</span>' 
+            : '<span class="tag-treatment">Perlakuan Uji</span>';
+
+          const repsDisplay = exp.replications.map((r, i) => `<span style="font-family:var(--font-mono); background:var(--bg-surface); padding:2px 6px; border-radius:4px; margin-right:4px;">U${i+1}: ${r}</span>`).join(' ');
+
+          const colorLabel = CONFIG.colorAbsorption[exp.color] ? CONFIG.colorAbsorption[exp.color].label : exp.color;
+
+          return `
+            <tr>
+              <td style="font-family:var(--font-mono); font-weight:700;">${idx + 1}</td>
+              <td>
+                <strong>Jarak: ${exp.distance} cm</strong> | NaHCO₃: ${exp.bicarbonate}% | Warna: ${colorLabel}
+              </td>
+              <td>${badge}</td>
+              <td>${repsDisplay}</td>
+              <td style="font-family:var(--font-mono); font-weight:700; color:var(--color-primary);">${exp.mean}</td>
+              <td style="font-family:var(--font-mono); color:var(--text-muted);">&plusmn; ${exp.sd}</td>
+              <td>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="app.deleteExperimentRow('${exp.id}')" title="Hapus baris data ini">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      populateCompareModal() {
+        const selA = document.getElementById('compareSelectA');
+        const selB = document.getElementById('compareSelectB');
+
+        const options = this.state.experiments.map(e => {
+          return `<option value="${e.id}">${e.type === 'control' ? '[KONTROL] ' : ''}Jarak: ${e.distance}cm, NaHCO3: ${e.bicarbonate}%, ${e.color} (Mean: ${e.mean})</option>`;
+        }).join('');
+
+        selA.innerHTML = options;
+        selB.innerHTML = options;
+
+        if (this.state.experiments.length >= 2) {
+          selA.selectedIndex = 0;
+          selB.selectedIndex = 1;
+        }
+        this.updateCompareDiff();
+      }
+
+      updateCompareDiff() {
+        const idA = document.getElementById('compareSelectA').value;
+        const idB = document.getElementById('compareSelectB').value;
+        const resultCard = document.getElementById('compareResultCard');
+
+        const expA = this.state.experiments.find(e => e.id === idA);
+        const expB = this.state.experiments.find(e => e.id === idB);
+
+        if (!expA || !expB) {
+          resultCard.textContent = 'Pilih dua perlakuan untuk membandingkan.';
+          return;
+        }
+
+        const diffMean = (expB.mean - expA.mean).toFixed(1);
+        const pctChange = expA.mean > 0 ? (((expB.mean - expA.mean) / expA.mean) * 100).toFixed(1) : '0';
+        const isHigher = expB.mean >= expA.mean;
+
+        resultCard.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+            <strong>Selisih Laju Fotosintesis (B - A):</strong>
+            <span style="font-family:var(--font-mono); font-size:1.1rem; font-weight:700; color:${isHigher ? 'var(--color-primary)' : 'var(--color-danger)'};">
+              ${diffMean > 0 ? '+' : ''}${diffMean} gelembung/menit (${pctChange > 0 ? '+' : ''}${pctChange}%)
+            </span>
+          </div>
+          <div style="font-size:0.84rem; line-height:1.5;">
+            • <strong>Percobaan A:</strong> Rata-rata ${expA.mean} &plusmn; ${expA.sd} gelembung/menit (${expA.replications.length} ulangan).<br>
+            • <strong>Percobaan B:</strong> Rata-rata ${expB.mean} &plusmn; ${expB.sd} gelembung/menit (${expB.replications.length} ulangan).<br>
+            • <strong>Interpretasi:</strong> ${isHigher 
+              ? 'Kondisi B menghasilkan laju fotosintesis yang lebih tinggi karena ketersediaan energi foton atau substrat CO₂ lebih optimal.' 
+              : 'Kondisi B mengalami penurunan laju fotosintesis, dapat disebabkan oleh berkurangnya intensitas cahaya atau spektrum gelombang yang kurang efisien diserap klorofil.'}
+          </div>
+        `;
+      }
+
+      setChartTab(tabKey) {
+        this.activeChartTab = tabKey;
+        ['btnFilterDistanceChart', 'btnFilterColorChart', 'btnFilterBicarbChart'].forEach(id => {
+          document.getElementById(id).classList.remove('active');
+        });
+        if (tabKey === 'distance') document.getElementById('btnFilterDistanceChart').classList.add('active');
+        if (tabKey === 'color') document.getElementById('btnFilterColorChart').classList.add('active');
+        if (tabKey === 'bicarbonate') document.getElementById('btnFilterBicarbChart').classList.add('active');
+
+        this.renderChart();
+        this.generateSmartTrend();
+      }
+
+      renderChart() {
+        const canvas = document.getElementById('chartCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.parentElement.clientWidth || 600;
+        const height = 300;
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Filter and sort data based on active tab
+        let dataPoints = [];
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#f8fafc' : '#0f172a';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)';
+
+        if (this.activeChartTab === 'distance') {
+          // Group by distance where bicarb=0.2 and color='white'
+          dataPoints = this.state.experiments
+            .filter(e => e.color === 'white' && e.bicarbonate === 0.2)
+            .sort((a, b) => a.distance - b.distance)
+            .map(e => ({ label: `${e.distance} cm`, xVal: e.distance, mean: e.mean, sd: e.sd, isControl: e.type === 'control' }));
+          document.getElementById('chartTitle').textContent = '📈 Grafik Pengaruh Jarak Lampu (Intensitas) Terhadap Laju Fotosintesis';
+        } else if (this.activeChartTab === 'color') {
+          // Sort colors from highest mean to lowest mean as specified in prompt
+          dataPoints = this.state.experiments
+            .filter(e => e.distance === 20 && e.bicarbonate === 0.2)
+            .sort((a, b) => b.mean - a.mean)
+            .map(e => {
+              const info = CONFIG.colorAbsorption[e.color] || { label: e.color, nm: '' };
+              return { label: `${e.color.toUpperCase()} (${info.nm})`, mean: e.mean, sd: e.sd, isControl: e.type === 'control' };
+            });
+          document.getElementById('chartTitle').textContent = '📈 Grafik Spektrum Warna Cahaya (Diurutkan Tertinggi ke Terendah)';
+        } else {
+          // Bicarbonate
+          dataPoints = this.state.experiments
+            .filter(e => e.distance === 20 && e.color === 'white')
+            .sort((a, b) => a.bicarbonate - b.bicarbonate)
+            .map(e => ({ label: `${e.bicarbonate}%`, mean: e.mean, sd: e.sd, isControl: e.type === 'control' }));
+          document.getElementById('chartTitle').textContent = '📈 Grafik Pengaruh Konsentrasi NaHCO₃ (CO₂) Terhadap Laju Fotosintesis';
+        }
+
+        if (dataPoints.length === 0) {
+          ctx.fillStyle = textColor;
+          ctx.font = '14px Plus Jakarta Sans, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('Belum ada data untuk kategori variabel ini. Lakukan pengujian di Lab (Tahap 3).', width / 2, height / 2);
+          return;
+        }
+
+        // Draw Axes & Grid
+        const paddingLeft = 50;
+        const paddingRight = 20;
+        const paddingTop = 30;
+        const paddingBottom = 50;
+        const plotWidth = width - paddingLeft - paddingRight;
+        const plotHeight = height - paddingTop - paddingBottom;
+
+        const maxVal = Math.max(50, ...dataPoints.map(d => d.mean + d.sd + 5));
+
+        // Horizontal Grid Lines & Y-axis labels
+        ctx.strokeStyle = gridColor;
+        ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
+        ctx.font = '11px JetBrains Mono, monospace';
+        ctx.textAlign = 'right';
+
+        const ySteps = 5;
+        for (let i = 0; i <= ySteps; i++) {
+          const val = Math.round((maxVal / ySteps) * i);
+          const y = paddingTop + plotHeight - (val / maxVal) * plotHeight;
+          ctx.beginPath();
+          ctx.moveTo(paddingLeft, y);
+          ctx.lineTo(width - paddingRight, y);
+          ctx.stroke();
+          ctx.fillText(val, paddingLeft - 8, y + 4);
+        }
+
+        // Y-axis title
+        ctx.save();
+        ctx.translate(14, height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = textColor;
+        ctx.font = '11px Plus Jakarta Sans, sans-serif';
+        ctx.fillText('Laju O₂ (gelembung / mnt)', 0, 0);
+        ctx.restore();
+
+        // Draw Bars with Error Bars
+        const numBars = dataPoints.length;
+        const barSpacing = plotWidth / numBars;
+        const barWidth = Math.min(46, barSpacing * 0.6);
+
+        dataPoints.forEach((pt, idx) => {
+          const x = paddingLeft + idx * barSpacing + barSpacing / 2;
+          const barHeight = (pt.mean / maxVal) * plotHeight;
+          const y = paddingTop + plotHeight - barHeight;
+
+          // Bar gradient
+          const barGrad = ctx.createLinearGradient(0, y, 0, y + barHeight);
+          if (pt.isControl) {
+            barGrad.addColorStop(0, '#10b981');
+            barGrad.addColorStop(1, '#047857');
+          } else {
+            barGrad.addColorStop(0, '#06b6d4');
+            barGrad.addColorStop(1, '#0284c7');
+          }
+
+          ctx.fillStyle = barGrad;
+          ctx.beginPath();
+          ctx.roundRect(x - barWidth / 2, y, barWidth, barHeight, [4, 4, 0, 0]);
+          ctx.fill();
+
+          // Value above bar
+          ctx.fillStyle = textColor;
+          ctx.font = 'bold 11px JetBrains Mono, monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(pt.mean, x, y - (pt.sd > 0 ? 14 : 5));
+
+          // Error Bar (Mean +/- SD)
+          if (pt.sd > 0) {
+            const errorTop = paddingTop + plotHeight - ((pt.mean + pt.sd) / maxVal) * plotHeight;
+            const errorBottom = paddingTop + plotHeight - (Math.max(0, pt.mean - pt.sd) / maxVal) * plotHeight;
+
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            // Vertical bar
+            ctx.moveTo(x, errorTop);
+            ctx.lineTo(x, errorBottom);
+            // Cap top
+            ctx.moveTo(x - 4, errorTop);
+            ctx.lineTo(x + 4, errorTop);
+            // Cap bottom
+            ctx.moveTo(x - 4, errorBottom);
+            ctx.lineTo(x + 4, errorBottom);
+            ctx.stroke();
+          }
+
+          // X-axis label
+          ctx.fillStyle = isDark ? '#cbd5e1' : '#334155';
+          ctx.font = '11px Plus Jakarta Sans, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(pt.label, x, paddingTop + plotHeight + 18);
+        });
+      }
+
+      generateSmartTrend() {
+        const narrativeBox = document.getElementById('smartTrendNarrative');
+        if (!narrativeBox) return;
+
+        if (this.state.experiments.length === 0) {
+          narrativeBox.textContent = 'Belum ada data eksperimen untuk dianalisis.';
+          return;
+        }
+
+        let narrative = '';
+
+        if (this.activeChartTab === 'distance') {
+          const distPoints = this.state.experiments
+            .filter(e => e.color === 'white' && e.bicarbonate === 0.2)
+            .sort((a, b) => a.distance - b.distance);
+
+          if (distPoints.length < 2) {
+            narrative = 'Uji minimal 2 jarak lampu berbeda untuk mendeteksi tren matematis intensitas cahaya.';
+          } else {
+            // Check differences between consecutive distance points
+            // Note: smaller distance = higher light intensity!
+            // When distance increases, rate decreases.
+            let decreases = true;
+            let deltas = [];
+            for (let i = 0; i < distPoints.length - 1; i++) {
+              const diff = distPoints[i+1].mean - distPoints[i].mean;
+              deltas.push(diff);
+              if (diff > 0) decreases = false;
+            }
+
+            const at10 = distPoints.find(p => p.distance === 10);
+            const at20 = distPoints.find(p => p.distance === 20);
+            let plateauDetected = false;
+            if (at10 && at20 && (at10.mean - at20.mean) < 16) {
+              plateauDetected = true;
+            }
+
+            narrative = `
+              <p><strong>Pola Hubungan Jarak Lampu (Hukum Kuadrat Terbalik &amp; Titik Jenuh):</strong></p>
+              <p style="margin-top:6px;">
+                ${decreases 
+                  ? 'Data menunjukkan pola <strong>penurunan laju pembentukan gelembung oksigen secara non-linier</strong> seiring bertambahnya jarak lampu terhadap tanaman Hydrilla verticillata.' 
+                  : 'Data menunjukkan fluktuasi laju gelembung terhadap jarak lampu.'}
+                Sesuai dengan <em>Hukum Kuadrat Terbalik ($I \\propto 1/d^2$)</em>, berkas foton menyebar secara kuadratik sehingga pada jarak 40-50 cm intensitas cahaya menurun hingga di bawah 25% dari kondisi kontrol baku.
+              </p>
+              ${plateauDetected ? `
+                <p style="margin-top:6px; color:var(--color-primary);">
+                  ✓ <strong>Deteksi Plateau / Saturasi Cahaya (Hukum Blackman):</strong> Pada jarak sangat dekat (10 cm), kurva laju mulai melandai (plateau). Hal ini membuktikan bahwa intensitas cahaya bukan lagi satu-satunya faktor pembatas; kecepatan enzim RuBisCO atau pasokan CO₂ di stroma telah mencapai kapasitas jenuh maksimum (Light Saturation Point).
+                </p>
+              ` : ''}
+            `;
+          }
+        } else if (this.activeChartTab === 'color') {
+          const colorPoints = this.state.experiments
+            .filter(e => e.distance === 20 && e.bicarbonate === 0.2)
+            .sort((a, b) => b.mean - a.mean);
+
+          narrative = `
+            <p><strong>Pola Absorpsi Spektrum Warna Klorofil (Panjang Gelombang):</strong></p>
+            <p style="margin-top:6px;">
+              Berdasarkan urutan efektivitas fotosintesis: <strong>${colorPoints.map(c => c.color.toUpperCase()).join(' ➔ ')}</strong>.
+            </p>
+            <p style="margin-top:6px;">
+              Cahaya biru (~430-450 nm) dan merah (~640-660 nm) menghasilkan laju gelembung oksigen tertinggi karena tepat berada pada puncak kurva absorpsi pigmen klorofil a dan b. Sebaliknya, filter cahaya hijau menghasilkan laju terendah karena panjang gelombang 500-550 nm hampir seluruhnya dipantulkan/diteruskan oleh daun, sehingga hanya sedikit foton yang mengaktifkan reaksi fotolisis air.
+            </p>
+          `;
+        } else {
+          // Bicarbonate
+          narrative = `
+            <p><strong>Pola Pengaruh Substrat CO₂ (Konsentrasi NaHCO₃):</strong></p>
+            <p style="margin-top:6px;">
+              Penambahan NaHCO₃ dari 0% ke 0,2% meningkatkan laju fotosintesis secara signifikan karena ion bikarbonat ($HCO_3^-$) menyediakan sumber karbon terlarut untuk fiksasi Siklus Calvin di stroma kloroplas. Pada konsentrasi di atas 0,5%, kurva laju mendatar karena seluruh situs aktif enzim RuBisCO telah tersaturasi penuh oleh molekul substrat CO₂.
+            </p>
+          `;
+        }
+
+        narrativeBox.innerHTML = narrative;
+      }
+
+      evaluateRubricRealtime() {
+        const text = (this.state.conclusionText || '').toLowerCase();
+        const kw = CONFIG.rubricKeywords;
+
+        const hasRelation = kw.relation.some(k => text.includes(k));
+        const hasDataRef = kw.dataRef.some(k => text.includes(k));
+        const hasReason = kw.scientificReason.some(k => text.includes(k));
+        const hasHypoVerif = kw.hypothesisVerif.some(k => text.includes(k));
+
+        this.state.rubricDetails = [hasRelation, hasDataRef, hasReason, hasHypoVerif];
+        const score = [hasRelation, hasDataRef, hasReason, hasHypoVerif].filter(Boolean).length;
+        this.state.rubricScore = score;
+
+        const scoreBadge = document.getElementById('rubricScoreDisplay');
+        if (scoreBadge) scoreBadge.textContent = `${score} / 4 Poin`;
+
+        const container = document.getElementById('rubricCriteriaContainer');
+        if (container) {
+          const criteriaList = [
+            { label: '1. Menyebutkan variabel manipulasi & arah hubungan (naik/turun/sebanding)', met: hasRelation },
+            { label: '2. Merujuk data angka kuantitatif / rata-rata empiris hasil pengamatan', met: hasDataRef },
+            { label: '3. Memberikan alasan ilmiah / mekanisme biologis (foton, fotolisis, siklus Calvin, faktor pembatas)', met: hasReason },
+            { label: '4. Menyatakan verifikasi status hipotesis (didukung / ditolak berdasarkan data)', met: hasHypoVerif }
+          ];
+
+          container.innerHTML = criteriaList.map(c => `
+            <div class="criteria-item ${c.met ? 'met' : ''}">
+              <span style="font-weight:700; color:${c.met ? 'var(--color-primary)' : 'var(--text-muted)'};">${c.met ? '✓' : '○'}</span>
+              <span>${c.label} ${c.met ? '<strong style="color:var(--color-primary);">(Terpenuhi)</strong>' : '<span style="color:var(--text-muted);">(Belum terdeteksi)</span>'}</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      renderQuiz() {
+        const container = document.getElementById('quizContainer');
+        if (!container) return;
+
+        const scoreBadge = document.getElementById('quizScoreText');
+        if (this.state.quiz.firstScore !== null) {
+          scoreBadge.textContent = `${this.state.quiz.lastScore} / 100 (Skor Awal: ${this.state.quiz.firstScore})`;
+        } else {
+          scoreBadge.textContent = 'Belum dikerjakan';
+        }
+
+        container.innerHTML = CONFIG.quizItems.map((item, qIdx) => {
+          const selectedIdx = this.state.quiz.answers[item.id];
+          const isSubmitted = this.state.quiz.submitted;
+
+          const optionsHtml = item.options.map((opt, optIdx) => {
+            let extraClass = '';
+            if (selectedIdx === optIdx) extraClass += ' selected';
+            if (isSubmitted) {
+              if (opt.isCorrect) extraClass += ' correct';
+              else if (selectedIdx === optIdx && !opt.isCorrect) extraClass += ' wrong';
+            }
+
+            return `
+              <label class="quiz-option-label ${extraClass}" onclick="app.selectQuizOption(${item.id}, ${optIdx})">
+                <input type="radio" name="q_${item.id}" value="${optIdx}" ${selectedIdx === optIdx ? 'checked' : ''} ${isSubmitted ? 'disabled' : ''} style="margin-top:3px;" />
+                <div>
+                  <div>${String.fromCharCode(65 + optIdx)}. ${opt.text}</div>
+                  ${isSubmitted ? `
+                    <div class="quiz-feedback show ${opt.isCorrect ? 'success' : 'error'}">
+                      ${opt.explanation}
+                    </div>
+                  ` : ''}
+                </div>
+              </label>
+            `;
+          }).join('');
+
+          return `
+            <div class="quiz-question-card">
+              <div class="quiz-question-header">
+                <span class="quiz-badge">Soal ${qIdx + 1} (${item.cognitive})</span>
+              </div>
+              <p style="font-size:0.9375rem; font-weight:600; margin-bottom:12px; color:var(--text-main);">
+                ${item.question}
+              </p>
+              <div class="quiz-options">
+                ${optionsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      selectQuizOption(qId, optIdx) {
+        if (this.state.quiz.submitted) return;
+        this.state.quiz.answers[qId] = optIdx;
+        this.saveState();
+        this.renderQuiz();
+      }
+
+      submitQuiz() {
+        const totalQuestions = CONFIG.quizItems.length;
+        const answeredCount = Object.keys(this.state.quiz.answers).length;
+
+        if (answeredCount < totalQuestions) {
+          alert(`Mohon jawab seluruh ${totalQuestions} soal kuis sebelum mengumpulkan! (Baru terjawab: ${answeredCount}/${totalQuestions})`);
+          return;
+        }
+
+        let correct = 0;
+        CONFIG.quizItems.forEach(item => {
+          const sel = this.state.quiz.answers[item.id];
+          if (sel !== undefined && item.options[sel].isCorrect) {
+            correct++;
+          }
+        });
+
+        const score = Math.round((correct / totalQuestions) * 100);
+
+        // Lock first attempt score for quasi experimental rigor!
+        if (this.state.quiz.firstScore === null) {
+          this.state.quiz.firstScore = score;
+        }
+        this.state.quiz.lastScore = score;
+        this.state.quiz.submitted = true;
+
+        this.saveState();
+        this.renderQuiz();
+
+        alert(`Kuis selesai! Skor Anda: ${score}/100 (${correct}/${totalQuestions} benar).\nPenjelasan lengkap untuk setiap opsi telah ditampilkan.`);
+      }
+
+      exportCSVData() {
+        if (this.state.experiments.length === 0) {
+          alert('Belum ada data eksperimen untuk diunduh.');
+          return;
+        }
+
+        let csv = 'No,Tipe,Jarak_cm,NaHCO3_persen,Warna_Cahaya,Ulangan_1,Ulangan_2,Ulangan_3,Rata_Rata,Simpangan_Baku\n';
+        this.state.experiments.forEach((exp, idx) => {
+          const u1 = exp.replications[0] !== undefined ? exp.replications[0] : '';
+          const u2 = exp.replications[1] !== undefined ? exp.replications[1] : '';
+          const u3 = exp.replications[2] !== undefined ? exp.replications[2] : '';
+          csv += `${idx + 1},${exp.type},${exp.distance},${exp.bicarbonate},${exp.color},${u1},${u2},${u3},${exp.mean},${exp.sd}\n`;
+        });
+
+        this.downloadFile(csv, `PhotoLab_Data_${this.state.student.name || 'Siswa'}.csv`, 'text/csv');
+      }
+
+      exportSummaryCSV() {
+        let csv = 'INSTRUMEN PENELITIAN KUASI EKSPERIMEN - PHOTOLAB INGENHOUSZ\n\n';
+        csv += 'IDENTITAS SISWA / RESPONDEN\n';
+        csv += `Nama / Kode,${this.state.student.name || '-'}\n`;
+        csv += `Kelas,${this.state.student.class || '-'}\n`;
+        csv += `Kelompok,${this.state.student.group || '-'}\n`;
+        csv += `Waktu Mulai,${new Date(this.state.student.startTime).toLocaleString('id-ID')}\n\n`;
+
+        csv += 'DURASI PENGERJAAN PER TAHAP (DETIK)\n';
+        for (let i = 0; i <= 5; i++) {
+          csv += `Tahap ${i},${this.state.stageDurationSeconds[i] || 0} detik\n`;
+        }
+        csv += '\n';
+
+        csv += 'HIPOTESIS & RUMUSAN MASALAH\n';
+        csv += `Rumusan Masalah,"${(this.state.problem.statement || '').replace(/"/g, '""')}"\n`;
+        csv += `Hipotesis Teruji,"${(this.state.problem.hypothesis || '').replace(/"/g, '""')}"\n\n`;
+
+        csv += 'HASIL EVALUASI PEMBELAJARAN\n';
+        csv += `Skor Kuis Pertama (Locked),${this.state.quiz.firstScore !== null ? this.state.quiz.firstScore : 'Belum Kuis'}\n`;
+        csv += `Skor Kuis Terakhir,${this.state.quiz.lastScore !== null ? this.state.quiz.lastScore : 'Belum Kuis'}\n`;
+        csv += `Skor Rubrik Kesimpulan Otomatis,${this.state.rubricScore} / 4\n\n`;
+
+        csv += 'TEKS KESIMPULAN SISWA\n';
+        csv += `"${(this.state.conclusionText || '').replace(/"/g, '""')}"\n\n`;
+
+        csv += 'REFLEKSI KRITIS SISWA\n';
+        csv += `Sumber Galat,"${(this.state.reflections.errorSource || '').replace(/"/g, '""')}"\n`;
+        csv += `Perbaikan Prosedur,"${(this.state.reflections.improvements || '').replace(/"/g, '""')}"\n`;
+        csv += `Pertanyaan Lanjutan,"${(this.state.reflections.futureResearch || '').replace(/"/g, '""')}"\n`;
+
+        this.downloadFile(csv, `PhotoLab_Rekap_Penelitian_${this.state.student.name || 'Siswa'}.csv`, 'text/csv');
+      }
+
+      exportJSONReport() {
+        const fullReport = {
+          metadata: {
+            app: 'PhotoLab PBL Virtual Laboratory',
+            version: '2.0',
+            exportedAt: new Date().toISOString()
+          },
+          respondent: this.state.student,
+          stageDurationsSeconds: this.state.stageDurationSeconds,
+          investigationDesign: {
+            problemStatement: this.state.problem.statement,
+            hypothesis: this.state.problem.hypothesis,
+            variableClassification: this.state.variableDesign
+          },
+          experimentalData: this.state.experiments,
+          evaluation: {
+            quizFirstScore: this.state.quiz.firstScore,
+            quizLastScore: this.state.quiz.lastScore,
+            quizAnswers: this.state.quiz.answers,
+            conclusionRubricScore: this.state.rubricScore,
+            conclusionRubricCriteriaMet: this.state.rubricDetails,
+            studentConclusionText: this.state.conclusionText
+          },
+          criticalReflections: this.state.reflections
+        };
+
+        const jsonStr = JSON.stringify(fullReport, null, 2);
+        this.downloadFile(jsonStr, `PhotoLab_Laporan_${this.state.student.name || 'Siswa'}.json`, 'application/json');
+      }
+
+      downloadFile(content, fileName, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      async downloadStandaloneHTML() {
+        let htmlContent = '';
+        try {
+          const res = await fetch(window.location.href);
+          if (res.ok) {
+            htmlContent = await res.text();
+          }
+        } catch (e) {
+          console.warn('Fetch fallback:', e);
+        }
+
+        if (!htmlContent || !htmlContent.includes('<html')) {
+          htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        }
+
+        // Clean any Vite dev server script tags if present
+        htmlContent = htmlContent
+          .replace(/<script type="module" src="\/@vite\/client"><\/script>/gi, '')
+          .replace(/<script type="module" src="\/@react-refresh"><\/script>/gi, '');
+
+        this.downloadFile(htmlContent, 'PhotoLab_v2_Ingenhousz_Mandiri.html', 'text/html;charset=utf-8');
+
+        // Show confirmation toast
+        const toast = document.createElement('div');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '24px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = 'var(--color-primary)';
+        toast.style.color = 'var(--text-inverse)';
+        toast.style.padding = '14px 24px';
+        toast.style.borderRadius = 'var(--radius-md)';
+        toast.style.boxShadow = 'var(--shadow-lg)';
+        toast.style.fontWeight = '700';
+        toast.style.zIndex = '9999';
+        toast.style.textAlign = 'center';
+        toast.style.maxWidth = '90%';
+        toast.innerHTML = '🎉 <strong>File HTML Mandiri Berhasil Diunduh!</strong><br><span style="font-size:0.85em; font-weight:500;">Buka langsung file "PhotoLab_v2_Ingenhousz_Mandiri.html" di laptop atau HP tanpa perlu koneksi internet.</span>';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }
+
+      preparePrintView() {
+        document.getElementById('printStudentInfo').textContent = `Nama: ${this.state.student.name || '-'} | Kelas: ${this.state.student.class || '-'} | Kelompok: ${this.state.student.group || '-'}`;
+        document.getElementById('printDate').textContent = `Tanggal: ${new Date().toLocaleDateString('id-ID')}`;
+        // Ensure all sections are visible for printing
+        for (let i = 0; i <= 5; i++) {
+          const sec = document.getElementById(`stageSection${i}`);
+          if (sec) sec.style.display = 'block';
+        }
+        this.renderChart();
+      }
+    }
+
+    // Instantiate and launch app
+    const app = new PhotoLabApp();
+    window.app = app;
+    window.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
+
+
+</body></html>
